@@ -786,7 +786,7 @@ namespace TacitusLogger.IntegrationTests
                                                   .WithGuidLogId()
                                                   .WithLogLevel(logLevel)
                                                   .WithExceptionHandling(ExceptionHandling.Log)
-                                                  .WithSelfMonitoring(new ConsoleDestination())
+                                                  .WithDiagnostics(new ConsoleDestination())
                                                   .Contributors()
                                                       .StackTrace()
                                                   .BuildContributors()

@@ -22,7 +22,7 @@ namespace TacitusLogger.Builders
         private LogCreationStrategyBase _logCreationStrategy;
         private ExceptionHandlingStrategyBase _exceptionHandlingStrategy;
         private Setting<LogLevel> _logLevel;
-        private ILogDestination _selfMonitoringDestination;
+        private ILogDestination _diagnosticsDestination;
         private bool _recordConfigurationAfterBuild;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace TacitusLogger.Builders
         /// <summary>
         /// 
         /// </summary>
-        public ILogDestination SelfMonitoringDestination => _selfMonitoringDestination;
+        public ILogDestination DiagnosticsDestination => _diagnosticsDestination;
         /// <summary>
         /// 
         /// </summary>
@@ -140,15 +140,15 @@ namespace TacitusLogger.Builders
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="selfMonitoringDestination"></param>
+        /// <param name="diagnosticsDestination"></param>
         /// <returns>Self.</returns>
-        public ILoggerBuilder WithSelfMonitoring(ILogDestination selfMonitoringDestination)
+        public ILoggerBuilder WithDiagnostics(ILogDestination diagnosticsDestination)
         {
-            if (_selfMonitoringDestination != null)
-                throw new InvalidOperationException("Self monitoring destination has already been set during this build");
-            if (selfMonitoringDestination == null)
-                throw new ArgumentNullException("selfMonitoringDestination");
-            _selfMonitoringDestination = selfMonitoringDestination;
+            if (_diagnosticsDestination != null)
+                throw new InvalidOperationException("Diagnostics destination has already been set during this build");
+            if (diagnosticsDestination == null)
+                throw new ArgumentNullException("diagnosticsDestination");
+            _diagnosticsDestination = diagnosticsDestination;
             return this;
         }
         /// <summary>
@@ -220,9 +220,9 @@ namespace TacitusLogger.Builders
             // Log creation strategy
             logger.ResetLogCreationStrategy(_logCreationStrategy);
 
-            // Self monitoring destination
-            if (_selfMonitoringDestination != null)
-                logger.SetSelfMonitoringDestination(_selfMonitoringDestination);
+            // Diagnostics destination
+            if (_diagnosticsDestination != null)
+                logger.SetDiagnosticsDestination(_diagnosticsDestination);
 
             // Exception handling strategy
             logger.ResetExceptionHandlingStrategy(_exceptionHandlingStrategy);

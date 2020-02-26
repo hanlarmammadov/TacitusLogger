@@ -31,14 +31,14 @@ namespace TacitusLogger.UnitTests.DiagnosticsTests
         {
             // Arrange
             TestDiagnosticsManager testDiagnosticsManager = new TestDiagnosticsManager();
-            var selfMonitoringDestination = new Mock<ILogDestination>().Object;
+            var diagnosticsDestination = new Mock<ILogDestination>().Object;
             var loggerName = "logger name";
 
             // Act
-            testDiagnosticsManager.SetDependencies(selfMonitoringDestination, loggerName);
+            testDiagnosticsManager.SetDependencies(diagnosticsDestination, loggerName);
 
             // Assert
-            Assert.AreEqual(selfMonitoringDestination, testDiagnosticsManager.LogDestination);
+            Assert.AreEqual(diagnosticsDestination, testDiagnosticsManager.LogDestination);
             Assert.AreEqual(loggerName, testDiagnosticsManager.LoggerName);
         }
         [Test]

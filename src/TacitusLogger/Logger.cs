@@ -28,7 +28,7 @@ namespace TacitusLogger
         private LogCreationStrategyBase _logCreationStrategy;
         private ExceptionHandlingStrategyBase _exceptionHandlingStrategy;
         private LoggerSettings _loggerSettings;
-        private ILogDestination _selfMonitoringDestination;
+        private ILogDestination _diagnosticsDestination;
         private Setting<LogLevel> _logLevel;
         private IList<LogTransformerBase> _logTransformers;
         private DiagnosticsManagerBase _diagnosticsManager;
@@ -121,7 +121,7 @@ namespace TacitusLogger
         /// <summary>
         /// 
         /// </summary>
-        public ILogDestination SelfMonitoringDestination => _selfMonitoringDestination;
+        public ILogDestination DiagnosticsDestination => _diagnosticsDestination;
         /// <summary>
         /// 
         /// </summary>
@@ -219,10 +219,10 @@ namespace TacitusLogger
         ///
         /// </summary>
         /// <param name="logDestination"></param>
-        public void SetSelfMonitoringDestination(ILogDestination selfMonitoringDestination)
+        public void SetDiagnosticsDestination(ILogDestination diagnosticsDestination)
         {
-            _selfMonitoringDestination = selfMonitoringDestination ?? throw new ArgumentNullException("selfMonitoringDestination");
-            _diagnosticsManager.SetDependencies(_selfMonitoringDestination, _loggerName);
+            _diagnosticsDestination = diagnosticsDestination ?? throw new ArgumentNullException("diagnosticsDestination");
+            _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);
         }
         /// <summary>
         /// Writes a new log. 
@@ -359,7 +359,7 @@ namespace TacitusLogger
         public void ResetDiagnosticsManager(DiagnosticsManagerBase diagnosticsManager)
         {
             _diagnosticsManager = diagnosticsManager ?? throw new ArgumentNullException("diagnosticsManager");
-            _diagnosticsManager.SetDependencies(_selfMonitoringDestination, _loggerName);
+            _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);
 
             if (_exceptionHandlingStrategy != null)
                 _exceptionHandlingStrategy.SetDiagnosticsManager(_diagnosticsManager);
@@ -374,8 +374,8 @@ namespace TacitusLogger
 
             try
             {
-                if (_selfMonitoringDestination != null)
-                    _selfMonitoringDestination.Dispose();
+                if (_diagnosticsDestination != null)
+                    _diagnosticsDestination.Dispose();
             }
             catch { }
 
@@ -416,9 +416,9 @@ namespace TacitusLogger
                 .AppendLine($"Log creation: {_logCreationStrategy.ToString()?.AddIndentationToLines()}")
                 .Append($"Exception handling: {_exceptionHandlingStrategy.ToString()?.AddIndentationToLines()}");
 
-            sb.AppendLine().Append($"Self monitoring destination: ");
-            if (_selfMonitoringDestination != null)
-                sb.Append(_selfMonitoringDestination.ToString()?.AddIndentationToLines());
+            sb.AppendLine().Append($"Diagnostics destination: ");
+            if (_diagnosticsDestination != null)
+                sb.Append(_diagnosticsDestination.ToString()?.AddIndentationToLines());
             else
                 sb.Append("[No destination]");
 

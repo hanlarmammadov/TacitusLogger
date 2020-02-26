@@ -1073,7 +1073,7 @@ namespace TacitusLogger.IntegrationTests
             logGroup1Mock.Verify(x => x.SendAsync(It.Is<LogModel>(m => m.Context == "013"), cancellationToken), Times.Once);
         }
         [Test]
-        public void Logger_With_Log_Exception_Handling_Strategy_And_Custom_Self_Monitoring_Destination_Handles_Exception_From_Log_Id_Generator()
+        public void Logger_With_Log_Exception_Handling_Strategy_And_Custom_Diagnostics_Destination_Handles_Exception_From_Log_Id_Generator()
         {
             // Arrange
             var logDestinationMock = new Mock<ILogDestination>();
@@ -1082,11 +1082,11 @@ namespace TacitusLogger.IntegrationTests
             Exception ex = new Exception();
             logIdGeneratorMock.Setup(x => x.Generate(It.IsAny<LogModel>())).Throws(ex);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             ILogger logger = LoggerBuilder.Logger("logger1").WithLogCreation(LogCreation.Standard)
                                                             .WithExceptionHandling(ExceptionHandling.Log)
-                                                            .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                            .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                             .WithLogIdGenerator(logIdGeneratorMock.Object)
                                                             .WriteLoggerConfigurationToDiagnostics(false)
                                                             .NewLogGroup("group1")
@@ -1097,7 +1097,7 @@ namespace TacitusLogger.IntegrationTests
             logger.Log(new Log());
 
             //Assert
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.Is<LogModel[]>(m => m.Length == 1 &&
+            diagnosticsDestinationMock.Verify(x => x.Send(It.Is<LogModel[]>(m => m.Length == 1 &&
                                                                                     m[0].Description == $"Logger threw an exception. See the log item." &&
                                                                                     m[0].Source == "logger1" &&
                                                                                     m[0].Context == "Log method" &&
@@ -1107,13 +1107,13 @@ namespace TacitusLogger.IntegrationTests
                                                                                     ((LoggerException)m[0].LogItems[0].Value).InnerException.InnerException == ex &&
                                                                                     m[0].LogType == LogType.Error
                                                                                 )), Times.Once);
-            selfMonitoringDestinationMock.VerifyNoOtherCalls();
+            diagnosticsDestinationMock.VerifyNoOtherCalls();
 
             logDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
             logDestinationMock.VerifyNoOtherCalls();
         }
         [Test]
-        public async Task Async_Logger_With_Log_Exception_Handling_Strategy_And_Custom_Self_Monitoring_Destination_Handles_Exception_From_Log_Id_Generator()
+        public async Task Async_Logger_With_Log_Exception_Handling_Strategy_And_Custom_Diagnostics_Destination_Handles_Exception_From_Log_Id_Generator()
         {
             // Arrange
             var logDestinationMock = new Mock<ILogDestination>();
@@ -1122,11 +1122,11 @@ namespace TacitusLogger.IntegrationTests
             Exception ex = new Exception();
             logIdGeneratorMock.Setup(x => x.GenerateAsync(It.IsAny<LogModel>(), It.IsAny<CancellationToken>())).Throws(ex);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             ILogger logger = LoggerBuilder.Logger("logger1").WithLogCreation(LogCreation.Standard)
                                                             .WithExceptionHandling(ExceptionHandling.Log)
-                                                            .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                            .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                             .WithLogIdGenerator(logIdGeneratorMock.Object)
                                                             .WriteLoggerConfigurationToDiagnostics(false)
                                                             .NewLogGroup("group1")
@@ -1138,7 +1138,7 @@ namespace TacitusLogger.IntegrationTests
             await logger.LogAsync(new Log(), cancellationToken);
 
             //Assert
-            selfMonitoringDestinationMock.Verify(x => x.SendAsync(It.Is<LogModel[]>(m => m.Length == 1 &&
+            diagnosticsDestinationMock.Verify(x => x.SendAsync(It.Is<LogModel[]>(m => m.Length == 1 &&
                                                                                     m[0].Description == $"Logger threw an exception. See the log item." &&
                                                                                     m[0].Source == "logger1" &&
                                                                                     m[0].Context == "LogAsync method" &&
@@ -1147,7 +1147,7 @@ namespace TacitusLogger.IntegrationTests
                                                                                     m[0].LogItems[0].Value is LoggerException &&
                                                                                     ((LoggerException)m[0].LogItems[0].Value).InnerException.InnerException == ex &&
                                                                                     m[0].LogType == LogType.Error), cancellationToken), Times.Once);
-            selfMonitoringDestinationMock.VerifyNoOtherCalls();
+            diagnosticsDestinationMock.VerifyNoOtherCalls();
 
             logDestinationMock.Verify(x => x.SendAsync(It.IsAny<LogModel[]>(), cancellationToken), Times.Never);
             logDestinationMock.VerifyNoOtherCalls();
@@ -1234,7 +1234,7 @@ namespace TacitusLogger.IntegrationTests
             logGroup3Mock.Verify(x => x.SendAsync(logModel, cancellationToken), Times.Once);
         }
         [Test]
-        public void Logger_With_Silent_Exception_Handling_And_Self_Monitoring_Destination_Swallows_All_Thrown_Exceptions()
+        public void Logger_With_Silent_Exception_Handling_And_Diagnostics_Destination_Swallows_All_Thrown_Exceptions()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1249,7 +1249,7 @@ namespace TacitusLogger.IntegrationTests
             logGroup2Mock.SetupGet(x => x.Status).Returns(Setting<LogGroupStatus>.From.Variable(LogGroupStatus.Active));
             logGroup2Mock.Setup(x => x.Send(It.IsAny<LogModel>())).Throws<Exception>();
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
@@ -1257,7 +1257,7 @@ namespace TacitusLogger.IntegrationTests
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Silent)
                                                    .WriteLoggerConfigurationToDiagnostics(false)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1269,10 +1269,10 @@ namespace TacitusLogger.IntegrationTests
             logGroup1Mock.Verify(x => x.Send(logModel), Times.Once);
             logGroup2Mock.Verify(x => x.Send(logModel), Times.Once);
 
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
+            diagnosticsDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
         }
         [Test]
-        public async Task Async_Logger_With_Silent_Exception_Handling_And_Self_Monitoring_Destination_Swallows_All_Thrown_Exceptions()
+        public async Task Async_Logger_With_Silent_Exception_Handling_And_Diagnostics_Destination_Swallows_All_Thrown_Exceptions()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1287,14 +1287,14 @@ namespace TacitusLogger.IntegrationTests
             logGroup2Mock.SetupGet(x => x.Status).Returns(Setting<LogGroupStatus>.From.Variable(LogGroupStatus.Active));
             logGroup2Mock.Setup(x => x.SendAsync(It.IsAny<LogModel>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
             logCreationStrategyMock.Setup(x => x.CreateLogModelAsync(It.IsAny<Log>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(logModel);
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Silent)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1307,10 +1307,10 @@ namespace TacitusLogger.IntegrationTests
             logGroup1Mock.Verify(x => x.SendAsync(logModel, cancellationToken), Times.Once);
             logGroup2Mock.Verify(x => x.SendAsync(logModel, cancellationToken), Times.Once);
 
-            selfMonitoringDestinationMock.Verify(x => x.SendAsync(It.IsAny<LogModel[]>(), cancellationToken), Times.Never);
+            diagnosticsDestinationMock.Verify(x => x.SendAsync(It.IsAny<LogModel[]>(), cancellationToken), Times.Never);
         }
         [Test]
-        public void Logger_With_Log_Exception_Handling_And_Self_Monitoring_Destination_Sends_All_Thrown_Exceptions_To_Self_Monitoring_Destination()
+        public void Logger_With_Log_Exception_Handling_And_Diagnostics_Destination_Sends_All_Thrown_Exceptions_To_Diagnostics_Destination()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1327,14 +1327,14 @@ namespace TacitusLogger.IntegrationTests
             Exception ex2 = new Exception();
             logGroup2Mock.Setup(x => x.Send(It.IsAny<LogModel>())).Throws(ex2);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
             logCreationStrategyMock.Setup(x => x.CreateLogModel(It.IsAny<Log>(), It.IsAny<string>())).Returns(logModel);
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Log)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1346,7 +1346,7 @@ namespace TacitusLogger.IntegrationTests
             logGroup1Mock.Verify(x => x.Send(logModel), Times.Once);
             logGroup2Mock.Verify(x => x.Send(logModel), Times.Once);
 
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.Is<LogModel[]>(m => m.Length == 1 &&
+            diagnosticsDestinationMock.Verify(x => x.Send(It.Is<LogModel[]>(m => m.Length == 1 &&
                                                                         m[0].LogType == LogType.Error &&
                                                                         m[0].LogItems[0].Value is LoggerException &&
                                                                         (((LoggerException)m[0].LogItems[0].Value).InnerException is AggregateException) &&
@@ -1355,7 +1355,7 @@ namespace TacitusLogger.IntegrationTests
                                                                         (((LoggerException)m[0].LogItems[0].Value).InnerException as AggregateException).InnerExceptions.Contains(ex2))), Times.Once);
         }
         [Test]
-        public async Task Async_Logger_With_Log_Exception_Handling_And_Self_Monitoring_Destination_Sends_All_Thrown_Exceptions_To_Self_Monitoring_Destination()
+        public async Task Async_Logger_With_Log_Exception_Handling_And_Diagnostics_Destination_Sends_All_Thrown_Exceptions_To_Diagnostics_Destination()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1372,14 +1372,14 @@ namespace TacitusLogger.IntegrationTests
             Exception ex2 = new Exception();
             logGroup2Mock.Setup(x => x.SendAsync(It.IsAny<LogModel>(), It.IsAny<CancellationToken>())).ThrowsAsync(ex2);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
             logCreationStrategyMock.Setup(x => x.CreateLogModelAsync(It.IsAny<Log>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(logModel);
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Log)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1392,7 +1392,7 @@ namespace TacitusLogger.IntegrationTests
             logGroup1Mock.Verify(x => x.SendAsync(logModel, cancellationToken), Times.Once);
             logGroup2Mock.Verify(x => x.SendAsync(logModel, cancellationToken), Times.Once);
 
-            selfMonitoringDestinationMock.Verify(x => x.SendAsync(It.Is<LogModel[]>(m => m.Length == 1 &&
+            diagnosticsDestinationMock.Verify(x => x.SendAsync(It.Is<LogModel[]>(m => m.Length == 1 &&
                                                                                          m[0].LogType == LogType.Error &&
                                                                                          m[0].LogItems[0].Value is LoggerException &&
                                                                                          (((LoggerException)m[0].LogItems[0].Value).InnerException is AggregateException) &&
@@ -1401,7 +1401,7 @@ namespace TacitusLogger.IntegrationTests
                                                                                          (((LoggerException)m[0].LogItems[0].Value).InnerException as AggregateException).InnerExceptions.Contains(ex2)), cancellationToken), Times.Once);
         }
         [Test]
-        public void Logger_With_Rethrow_Exception_Handling_And_Self_Monitoring_Destination_Rethrow_Thrown_Exceptions()
+        public void Logger_With_Rethrow_Exception_Handling_And_Diagnostics_Destination_Rethrow_Thrown_Exceptions()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1418,7 +1418,7 @@ namespace TacitusLogger.IntegrationTests
             Exception ex2 = new Exception();
             logGroup2Mock.Setup(x => x.Send(It.IsAny<LogModel>())).Throws(ex2);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
@@ -1426,7 +1426,7 @@ namespace TacitusLogger.IntegrationTests
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Rethrow)
                                                    .WriteLoggerConfigurationToDiagnostics(false)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1448,10 +1448,10 @@ namespace TacitusLogger.IntegrationTests
             Assert.IsTrue(aex.InnerExceptions.Contains(ex1));
             Assert.IsTrue(aex.InnerExceptions.Contains(ex2));
 
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
+            diagnosticsDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
         }
         [Test]
-        public void Async_Logger_With_Rethrow_Exception_Handling_And_Self_Monitoring_Destination_Rethrow_Thrown_Exceptions()
+        public void Async_Logger_With_Rethrow_Exception_Handling_And_Diagnostics_Destination_Rethrow_Thrown_Exceptions()
         {
             // Arrange
             var logGroup1Mock = new Mock<LogGroupBase>();
@@ -1468,14 +1468,14 @@ namespace TacitusLogger.IntegrationTests
             Exception ex2 = new Exception();
             logGroup2Mock.Setup(x => x.SendAsync(It.IsAny<LogModel>(), It.IsAny<CancellationToken>())).ThrowsAsync(ex2);
 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
 
             var logCreationStrategyMock = new Mock<LogCreationStrategyBase>();
             LogModel logModel = new LogModel();
             logCreationStrategyMock.Setup(x => x.CreateLogModelAsync(It.IsAny<Log>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(logModel);
 
             ILogger logger = LoggerBuilder.Logger().WithExceptionHandling(ExceptionHandling.Rethrow)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WithLogCreation(logCreationStrategyMock.Object)
                                                    .NewLogGroup(logGroup1Mock.Object)
                                                    .NewLogGroup(logGroup2Mock.Object)
@@ -1498,7 +1498,7 @@ namespace TacitusLogger.IntegrationTests
             Assert.IsTrue(aex.InnerExceptions.Contains(ex1));
             Assert.IsTrue(aex.InnerExceptions.Contains(ex2));
 
-            selfMonitoringDestinationMock.Verify(x => x.SendAsync(It.IsAny<LogModel[]>(), It.IsAny<CancellationToken>()), Times.Never);
+            diagnosticsDestinationMock.Verify(x => x.SendAsync(It.IsAny<LogModel[]>(), It.IsAny<CancellationToken>()), Times.Never);
         }
         [Test]
         public void Logger_Containing_Several_LogGroups_Each_With_Own_Cache_When_Loggers_Dispose_Is_Called_Each_Cache_Is_Disposed_Correctly()
@@ -1560,7 +1560,7 @@ namespace TacitusLogger.IntegrationTests
             // Arrange 
             var logDestination1Mock = new Mock<ILogDestination>();
             var logDestination2Mock = new Mock<ILogDestination>();
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
             var logIdGeneratorMock = new Mock<ILogIdGenerator>();
             var logCache1Mock = new Mock<ILogCache>();
             var logCache2Mock = new Mock<ILogCache>();
@@ -1575,7 +1575,7 @@ namespace TacitusLogger.IntegrationTests
 
             ILogger logger = LoggerBuilder.Logger().WithLogIdGenerator(logIdGeneratorMock.Object)
                                                    .WithLogLevel(logLevelProviderMock.Object)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .Contributors()
                                                        .StackTrace(logContributorStatusProviderMock.Object)
                                                        .Custom(customLogContributorMock.Object)
@@ -1605,7 +1605,7 @@ namespace TacitusLogger.IntegrationTests
             // Assert
             logDestination1Mock.Verify(x => x.Dispose(), Times.Once);
             logDestination2Mock.Verify(x => x.Dispose(), Times.Once);
-            selfMonitoringDestinationMock.Verify(x => x.Dispose(), Times.Once);
+            diagnosticsDestinationMock.Verify(x => x.Dispose(), Times.Once);
             logIdGeneratorMock.Verify(x => x.Dispose(), Times.Once);
             logCache1Mock.Verify(x => x.Dispose(), Times.Once);
             logCache2Mock.Verify(x => x.Dispose(), Times.Once);
@@ -1626,8 +1626,8 @@ namespace TacitusLogger.IntegrationTests
             logDestination1Mock.Setup(x => x.ToString()).Returns("");
             var logDestination2Mock = new Mock<ILogDestination>();
             logDestination2Mock.Setup(x => x.ToString()).Returns("");
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
-            selfMonitoringDestinationMock.Setup(x => x.ToString()).Returns("");
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
+            diagnosticsDestinationMock.Setup(x => x.ToString()).Returns("");
             var logIdGeneratorMock = new Mock<ILogIdGenerator>();
             logIdGeneratorMock.Setup(x => x.ToString()).Returns("");
             var logCache1Mock = new Mock<ILogCache>();
@@ -1653,7 +1653,7 @@ namespace TacitusLogger.IntegrationTests
 
             ILogger logger = LoggerBuilder.Logger().WithLogIdGenerator(logIdGeneratorMock.Object)
                                                    .WithLogLevel(logLevelProviderMock.Object)
-                                                   .WithSelfMonitoring(selfMonitoringDestinationMock.Object)
+                                                   .WithDiagnostics(diagnosticsDestinationMock.Object)
                                                    .WriteLoggerConfigurationToDiagnostics(false)
                                                    .Contributors()
                                                        .StackTrace(logContributorStatusProviderMock.Object)
@@ -1684,7 +1684,7 @@ namespace TacitusLogger.IntegrationTests
             // Assert
             logDestination1Mock.Verify(x => x.ToString(), Times.Once);
             logDestination2Mock.Verify(x => x.ToString(), Times.Once);
-            selfMonitoringDestinationMock.Verify(x => x.ToString(), Times.Once);
+            diagnosticsDestinationMock.Verify(x => x.ToString(), Times.Once);
             logIdGeneratorMock.Verify(x => x.ToString(), Times.Once);
             logCache1Mock.Verify(x => x.ToString(), Times.Once);
             logCache2Mock.Verify(x => x.ToString(), Times.Once);

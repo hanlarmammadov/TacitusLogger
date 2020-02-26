@@ -47,7 +47,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.IsNull(loggerBuilder.LogCreationStrategy);
             Assert.IsNull(loggerBuilder.ExceptionHandlingStrategy);
             Assert.IsNull(loggerBuilder.LogLevel);
-            Assert.IsNull(loggerBuilder.SelfMonitoringDestination);
+            Assert.IsNull(loggerBuilder.DiagnosticsDestination);
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.IsNull(loggerBuilder.LogCreationStrategy);
             Assert.IsNull(loggerBuilder.ExceptionHandlingStrategy);
             Assert.IsNull(loggerBuilder.LogLevel);
-            Assert.IsNull(loggerBuilder.SelfMonitoringDestination);
+            Assert.IsNull(loggerBuilder.DiagnosticsDestination);
         }
 
         #endregion
@@ -240,23 +240,23 @@ namespace TacitusLogger.UnitTests.BuildersTests
 
         #endregion
 
-        #region Tests for WithSelfMonitoringDestination method
+        #region Tests for WithDiagnosticsDestination method
 
         [Test]
         [Ignore("Test not implemented")]
-        public void WithSelfMonitoringDestination_When_Called_Sets_Self_Monitoring_Destination()
+        public void WithDiagnosticsDestination_When_Called_Sets_Diagnostics_Destination()
         {
 
         }
         [Test]
         [Ignore("Test not implemented")]
-        public void WithSelfMonitoringDestination_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
+        public void WithDiagnosticsDestination_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
         {
 
         }
         [Test]
         [Ignore("Test not implemented")]
-        public void WithSelfMonitoringDestination_When_Called_With_Null_Self_Monitoring_Destination_Throws_ArgumentNullException()
+        public void WithDiagnosticsDestination_When_Called_With_Null_Diagnostics_Destination_Throws_ArgumentNullException()
         {
 
         }
@@ -698,7 +698,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.AreEqual(logLevelValueProviderMock.Object, logger.LogLevel);
         }
         [Test]
-        public void BuildLogger_When_Called_Given_That_Self_Monitoring_Destination_Was_Not_Set_During_The_Build_Does_Not_Sets_Loggers_Self_Monitoring_Destination()
+        public void BuildLogger_When_Called_Given_That_Diagnostics_Destination_Was_Not_Set_During_The_Build_Does_Not_Sets_Loggers_Diagnostics_Destination()
         {
             // Arrange
             LoggerBuilder loggerBuilder = (LoggerBuilder)LoggerBuilder.Logger();
@@ -707,51 +707,51 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Logger logger = (Logger)loggerBuilder.BuildLogger();
 
             // Assert    
-            Assert.IsNull(logger.SelfMonitoringDestination);
+            Assert.IsNull(logger.DiagnosticsDestination);
         }
         [Test]
-        public void BuildLogger_When_Called_Given_That_Self_Monitoring_Destination_Was_Set_During_The_Build_Sets_Loggers_Self_Monitoring_Destination()
+        public void BuildLogger_When_Called_Given_That_Diagnostics_Destination_Was_Set_During_The_Build_Sets_Loggers_Diagnostics_Destination()
         {
             // Arrange
             LoggerBuilder loggerBuilder = (LoggerBuilder)LoggerBuilder.Logger();
-            var selfMonitoringDestination = new Mock<ILogDestination>().Object;
-            loggerBuilder.WithSelfMonitoring(selfMonitoringDestination);
+            var diagnosticsDestination = new Mock<ILogDestination>().Object;
+            loggerBuilder.WithDiagnostics(diagnosticsDestination);
 
             // Act
             Logger logger = (Logger)loggerBuilder.BuildLogger();
 
             // Assert    
-            Assert.AreEqual(selfMonitoringDestination, logger.SelfMonitoringDestination);
+            Assert.AreEqual(diagnosticsDestination, logger.DiagnosticsDestination);
         } 
         [Test]
         public void BuildLogger_When_Called_Given_That_Flag_Is_Set_To_True()
         {
             // Arrange
             LoggerBuilder loggerBuilder = (LoggerBuilder)LoggerBuilder.Logger();
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
-            loggerBuilder.WithSelfMonitoring(selfMonitoringDestinationMock.Object);
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
+            loggerBuilder.WithDiagnostics(diagnosticsDestinationMock.Object);
             loggerBuilder.WriteLoggerConfigurationToDiagnostics(true);
 
             // Act
             Logger logger = (Logger)loggerBuilder.BuildLogger();
 
             // Assert  
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Once);
+            diagnosticsDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Once);
         }
         [Test]
         public void BuildLogger_When_Called_Given_That_Flag_Is_Set_To_False()
         {
             // Arrange
             LoggerBuilder loggerBuilder = (LoggerBuilder)LoggerBuilder.Logger();
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
-            loggerBuilder.WithSelfMonitoring(selfMonitoringDestinationMock.Object);
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
+            loggerBuilder.WithDiagnostics(diagnosticsDestinationMock.Object);
             loggerBuilder.WriteLoggerConfigurationToDiagnostics(false);
 
             // Act
             Logger logger = (Logger)loggerBuilder.BuildLogger();
 
             // Assert  
-            selfMonitoringDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
+            diagnosticsDestinationMock.Verify(x => x.Send(It.IsAny<LogModel[]>()), Times.Never);
         }
 
         #endregion

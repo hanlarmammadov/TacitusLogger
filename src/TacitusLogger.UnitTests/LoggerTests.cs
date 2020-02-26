@@ -1364,23 +1364,23 @@ namespace TacitusLogger.UnitTests
 
         #endregion
 
-        #region Tests for SetSelfMonitoringDestination method
+        #region Tests for SetDiagnosticsDestination method
 
         [Test]
-        public void SetSelfMonitoringDestination_When_Called_Sets_SelfMonitoringDestination()
+        public void SetDiagnosticsDestination_When_Called_Sets_DiagnosticsDestination()
         {
             // Arrange
             Logger logger = new Logger();
             var logdestination = new Mock<ILogDestination>().Object;
 
             // Act
-            logger.SetSelfMonitoringDestination(logdestination);
+            logger.SetDiagnosticsDestination(logdestination);
 
             // Assert
-            Assert.AreEqual(logdestination, logger.SelfMonitoringDestination);
+            Assert.AreEqual(logdestination, logger.DiagnosticsDestination);
         }
         [Test]
-        public void SetSelfMonitoringDestination_When_Called_WithNull_Hanlder_Throws_ArgumentNullException()
+        public void SetDiagnosticsDestination_When_Called_WithNull_Hanlder_Throws_ArgumentNullException()
         {
             // Arrange
             Logger logger = new Logger();
@@ -1389,9 +1389,9 @@ namespace TacitusLogger.UnitTests
             var ex = Assert.Catch<ArgumentNullException>(() =>
             {
                 // Act
-                logger.SetSelfMonitoringDestination(null as ILogDestination);
+                logger.SetDiagnosticsDestination(null as ILogDestination);
             });
-            Assert.AreEqual("selfMonitoringDestination", ex.ParamName);
+            Assert.AreEqual("diagnosticsDestination", ex.ParamName);
         }
 
         #endregion
@@ -1413,19 +1413,19 @@ namespace TacitusLogger.UnitTests
             Assert.AreEqual(diagnosticsManager, logger.ExceptionHandlingStrategy.DiagnosticsManager); 
         }
         [Test]
-        public void ResetDiagnosticsManager_When_Called_Sets_Provides_Diagnostics_Manager_With_Self_Monitoring_Destination()
+        public void ResetDiagnosticsManager_When_Called_Sets_Provides_Diagnostics_Manager_With_Diagnostics_Destination()
         {
             // Arrange
             Logger logger = new Logger();
             var diagnosticsManager = new Mock<DiagnosticsManagerBase>().Object;
-            var selfMonitoringDestination = new Mock<ILogDestination>().Object;
-            logger.SetSelfMonitoringDestination(selfMonitoringDestination);
+            var diagnosticsDestination = new Mock<ILogDestination>().Object;
+            logger.SetDiagnosticsDestination(diagnosticsDestination);
 
             // Act
             logger.ResetDiagnosticsManager(diagnosticsManager);
 
             // Assert
-            Assert.AreEqual(selfMonitoringDestination, logger.DiagnosticsManager.LogDestination);
+            Assert.AreEqual(diagnosticsDestination, logger.DiagnosticsManager.LogDestination);
         }
         [Test]
         public void ResetDiagnosticsManager_When_Called_Provides_Diagnostics_Manager_With_Logger_Name()
@@ -2005,7 +2005,7 @@ namespace TacitusLogger.UnitTests
             // Arrange
             var logDestinationMock = new Mock<ILogDestination>();
             Logger logger = new Logger();
-            logger.SetSelfMonitoringDestination(logDestinationMock.Object);
+            logger.SetDiagnosticsDestination(logDestinationMock.Object);
 
             // Act
             logger.Dispose();
@@ -2020,7 +2020,7 @@ namespace TacitusLogger.UnitTests
             var logDestinationMock = new Mock<ILogDestination>();
             logDestinationMock.Setup(x => x.Dispose()).Throws<Exception>();
             Logger logger = new Logger();
-            logger.SetSelfMonitoringDestination(logDestinationMock.Object);
+            logger.SetDiagnosticsDestination(logDestinationMock.Object);
 
             // Act
             logger.Dispose();
@@ -2200,21 +2200,21 @@ namespace TacitusLogger.UnitTests
             Assert.IsTrue(result.Contains(exceptionHandlingStrategyDescription));
         }
         [Test]
-        public void ToString_When_Called_Calls_ToString_Method_Of_Self_Monitoring_Destnation()
+        public void ToString_When_Called_Calls_ToString_Method_Of_Diagnostics_Destnation()
         {
             // Arrange 
-            var selfMonitoringDestinationMock = new Mock<ILogDestination>();
-            var selfMonitoringDestinationDescription = "selfMonitoringDestinationDescription";
-            selfMonitoringDestinationMock.Setup(x => x.ToString()).Returns(selfMonitoringDestinationDescription);
+            var diagnosticsDestinationMock = new Mock<ILogDestination>();
+            var diagnosticsDestinationDescription = "diagnosticsDestinationDescription";
+            diagnosticsDestinationMock.Setup(x => x.ToString()).Returns(diagnosticsDestinationDescription);
             Logger logger = new Logger();
-            logger.SetSelfMonitoringDestination(selfMonitoringDestinationMock.Object);
+            logger.SetDiagnosticsDestination(diagnosticsDestinationMock.Object);
 
             // Act
             var result = logger.ToString();
 
             // Assert
-            selfMonitoringDestinationMock.Verify(x => x.ToString(), Times.Once);
-            Assert.IsTrue(result.Contains(selfMonitoringDestinationDescription));
+            diagnosticsDestinationMock.Verify(x => x.ToString(), Times.Once);
+            Assert.IsTrue(result.Contains(diagnosticsDestinationDescription));
         }
         [Test]
         public void ToString_When_Called_Calls_ToString_Method_Of_Log_Level_Setting()

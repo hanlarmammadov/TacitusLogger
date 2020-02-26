@@ -16,7 +16,7 @@ namespace TacitusLogger.Builders
         ILogTransformersBuilder Transformers();
         ILoggerBuilder WithLogCreation(LogCreationStrategyBase logCreationStrategy);
         ILoggerBuilder WithExceptionHandling(ExceptionHandlingStrategyBase exceptionHandlingStrategy);
-        ILoggerBuilder WithSelfMonitoring(ILogDestination selfMonitoringDestination);
+        ILoggerBuilder WithDiagnostics(ILogDestination diagnosticsDestination);
         ILoggerBuilder WriteLoggerConfigurationToDiagnostics(bool should);
         ILoggerBuilder NewLogGroup(LogGroupBase logGroup);
         ILogGroupBuilder NewLogGroup(string logGroupName);

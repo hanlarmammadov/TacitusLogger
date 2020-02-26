@@ -88,8 +88,466 @@ Log error = Log.Error("Some error occurred")
                .Tagged("Error", "Exception", "Bug");
 await error.ToAsync(logger);
  ```
+ 
+# Examples of logger configuration
+
+## Logger with single console log destination
+In the simplest form, logger could contain a single log group that proceeds all logs. The following code snippet the logger with a single log group containing one `ConsoleDestination` is configured to take all logs:
+
+```cs
+ILogger logger = LoggerBuilder.Logger().ForAllLogs()
+                                       .Console().Add()
+                                       .BuildLogger();
+```
+Actually, more precise syntax for this configuration would be like the following:
+```cs
+ILogger logger = LoggerBuilder.Logger().NewLogGroup()
+                                       .ForAllLogs()
+                                       .Console().Add()
+                                       .BuildLogGroup()
+                                       .BuildLogger();
+```
+Nevertheless, when you have a logger that contains only one log group, you can omit `NewLogGroup()` and `BuildLogGroup()`.
+ 
+## Logger with several log destinations
+
+In this example logger is configured with single log group containing two log destinations - Console and Debug:
+
+```cs
+ILogger logger = LoggerBuilder.Logger("App1").ForAllLogs()
+                                                .Console().Add()
+                                                .Debug().Add()
+                                             .BuildLogger();
+```
+Same example:
+```cs
+ILoggerBuilder loggerBuilder = LoggerBuilder.Logger("App1");
+ILogGroupDestinationsBuilder groupDestinations = loggerBuilder.ForAllLogs();
+groupDestinations.Console().Add();
+groupDestinations.Debug().Add();
+groupDestinations.BuildLogGroup();
+Logger logger = loggerBuilder.BuildLogger();
+```
+
+## Custom log file path template
+In this example file destination is configured with file path template that will be used to save logs. Template contains placeholders `$Source`, `$LogType`, `$LogDate(dd-MM-yyyy)` that will be replaced with according properties of log models thus forming various file paths. If file exists it will be appended, otherwise, a new file will be created with all preceding directories. When selecting file path template make sure the application has the according write permissions. 
+
+```cs
+ILogger logger = LoggerBuilder.Logger("Main logger").ForAllLogs()
+                                                    .File().WithPath(@".\$Source\$LogType logs\Logs-$LogDate(dd-MM-yyyy).log")
+                                                           .Add()
+                                                    .BuildLogger();
+```
+
+## Custom log text template
+ 
+```cs
+ILogger logger = LoggerBuilder.Logger().ForAllLogs()
+                                       .Console().WithSimpleTemplateLogText("Log of type: $LogType, Description: $Description, Date: $LogDate")
+                                                 .Add()
+                                       .BuildLogger();
+```
+## Several log groups
+
+Here a logger with two log groups is configured. First log group named `Not important` receives `Info` type logs and sends them to console and debug destinations. Second log group - `Important` writes `Error`, `Failure` and `Critical` logs to file and console.
+
+```cs
+ILogger logger = LoggerBuilder.Logger().NewLogGroup("Not important")
+                                            .ForInfoLogs()
+                                            .Console().Add()
+                                            .Debug().Add()
+                                        .BuildLogGroup()
+                                        .NewLogGroup("Important")
+                                            .ForRule(x => x.LogTypeIsIn(LogType.Error, LogType.Failure, LogType.Critical))
+                                            .File().WithPath(@".\ImportantLogs.txt").Add()
+                                            .Console().Add()
+                                        .BuildLogGroup()
+                                        .BuildLogger();
+```
+
+Same configuration as above:
+```cs
+var loggerBuilder = LoggerBuilder.Logger();
+
+var notImpLogs = loggerBuilder.NewLogGroup("Not important");
+var notImpLogsDestinations = notImpLogs.ForInfoLogs();
+notImpLogsDestinations.Console().Add();
+notImpLogsDestinations.Debug().Add();
+notImpLogsDestinations.BuildLogGroup();
+
+var impLogsGroup = loggerBuilder.NewLogGroup("Important");
+var impLogsDestinations = impLogsGroup.ForRule(x => x.LogTypeIsIn(LogType.Error, LogType.Failure, LogType.Critical));
+impLogsDestinations.File().WithPath(@".\ImportantLogs.txt").Add();
+impLogsDestinations.Console().Add();
+impLogsDestinations.BuildLogGroup();
+
+ILogger logger = loggerBuilder.BuildLogger();
+```
+
+## Constant log group status
+
+In the following code snippet log group `"group1"` is configured to be inactive:
+```cs
+var logGroupStatus = LogGroupStatus.Inactive;
+
+ILogger logger = LoggerBuilder.Logger().NewLogGroup("group1")
+                                           .SetStatus(logGroupStatus)
+                                           .ForInfoLogs()
+                                           .Console().Add()
+                                       .BuildLogGroup()
+                                       .BuildLogger();
+```
+
+## Log group with status that can be changed at runtime
+In this example value provider of type `TacitusLogger.MutableSetting<LogGroupStatus>` is used to manage the value for log group status. After building the logger the value provider used to change log group status to `Inactive` at runtime:
+```cs
+MutableSetting<LogGroupStatus> logGroupStatus = Setting<LogGroupStatus>.From.Variable(LogGroupStatus.Active);
+
+ILogger logger = LoggerBuilder.Logger().NewLogGroup("group1")
+                                            .SetStatus(logGroupStatus)
+                                            .ForInfoLogs()
+                                            .Console().Add()
+                                        .BuildLogGroup()
+                                        .BuildLogger();
+
+logger.LogInfo("This log will be processed by group1");
+logGroupStatus.SetValue(LogGroupStatus.Inactive);
+logger.LogInfo("This log will not, because group1 is now inactive");
+```
+## Logger with log caching
+
+The following example configures log caching for the log group `"Groups with cache"`: Cache size to 20 logs and cache time to 60 seconds.
+
+```cs
+ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Groups with cache")
+                                                        .WithCaching(20, 60000, isActive: true)
+                                                        .ForAllLogs()
+                                                        .Console().Add()
+                                                    .BuildLogger();
+```
+
+## Logger with custom log cache
+In this example the custom log cache implementation is registered with the log group `"Groups with cache"`.
+
+```cs
+ILogCache customLogCache = new MyCustomLogCache();
+ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Groups with cache")
+                                                        .WithCaching(customLogCache, isActive: true)
+                                                        .ForAllLogs()
+                                                        .Console().Add()
+                                                    .BuildLogger();
+```
+## Logger with several groups each with its own log cache
+Each log group can have its own caching configuration:
+```cs
+ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Group1")
+                                                        .WithCaching(100)
+                                                        .ForAllLogs()
+                                                            .File()
+                                                            .WithPath(@".\AllLogs.txt")
+                                                            .Add()
+                                                    .BuildLogGroup()
+                                                    .NewLogGroup("Group2")
+                                                        .WithCaching(10)
+                                                        .ForErrorLogs()
+                                                            .File()
+                                                            .WithPath(@".\Errors.txt")
+                                                            .Add()
+                                                    .BuildLogGroup()
+                                                    .BuildLogger();
+```
+
+## Logger with log contributors
+
+The following code snippet adds `StackTraceContributor` log contributor to the logger. Log contributors add additional specific data to each log:
+
+```cs
+ILogger logger = LoggerBuilder.Logger()
+                              .Contributors()
+                                    .StackTrace()
+                              .BuildContributors()
+                              .NewLogGroup("group1")
+                                   .ForAllLogs()
+                                   .File()
+                                   .WithPath(@".\logs.txt")
+                                   .Add()
+                               .BuildLogGroup()
+                               .BuildLogger();
+```
+## Logger with custom log contributor
+  
+```cs
+LogContributorBase customContributor = new MyCustomContributor();
+
+ILogger logger = LoggerBuilder.Logger()
+                                .LogContributors()
+                                    .Custom(customContributor)
+                                .BuildContributors()
+                                .NewLogGroup("group1")
+                                    .ForAllLogs()
+                                    .File().WithPath(@".\logs.txt").Add()
+                                .BuildLogGroup()
+                                .BuildLogger();
+```
+## Logger with log transformers
+The following code snippet adds `TacitusLogger.Transformers.StringsManualTransformer` log transformer to the logger. Log transformers allow to modify all logs before they are sent to log groups. In this case `StringsManualTransformer` is used to modify all strings to lower case (Note that no null checks are performed inside the delegate, that is because it  `StringsManualTransformer` filters out null strings and does not sends them to the delegate):
+```cs
+ILogger logger = LoggerBuilder.Logger()
+                              .Transformers()
+                                  .StringsManual((ref string s) => s.ToLower(), true, "Lowercase")
+                              .BuildTransformers()
+                              .NewLogGroup("group1")
+                                  .ForAllLogs()
+                                  .Console()
+                                  .Add()
+                              .BuildLogGroup()
+                              .BuildLogger();
+```
+
+## Logger with custom log transformers
+In the following example in addition to the transformer from the previous example, another custom transformer is added to the logger: 
+
+```cs
+var myCustomLogTransformer = new MyCustomLogTransformer("some transformer");
+
+ILogger logger = LoggerBuilder.Logger()
+                              .Transformers()
+                                  .StringsManual((ref string s) => s.ToLower(), true, "Lowercase")
+                                  .Custom(myCustomLogTransformer, true)
+                              .BuildTransformers()
+                              .NewLogGroup("group1")
+                                  .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogGroup()
+                              .BuildLogger();
+```
 
 
+## Logger destination feeding strategy
+Each log group has its own destination feeding strategy which defines how log group sends provided logs to its destinations. There are two built-in strategies - Greedy and FirstSuccess. If not specified, greedy is the default strategy for all log groups. The following example configures two log groups with feeding strategies specified explicitly:
+```cs
+ILogger logger = LoggerBuilder.Logger()
+                              .NewLogGroup("non-greedy group")
+                                  .WithDestinationFeeding(DestinationFeedingStrategy.FirstSuccess)
+                                  .ForAllLogs()
+                                      .File().WithPath(@".\logs1.txt").Add()
+                                      .File().WithPath(@".\logs2.txt").Add()
+                              .BuildLogGroup()
+                              .NewLogGroup("greedy group")
+                                  .WithDestinationFeeding(DestinationFeedingStrategy.Greedy)
+                                  .ForErrorLogs()
+                                      .File().WithPath(@".\errors.txt").Add()
+                                      .Console().Add()
+                              .BuildLogGroup()
+                              .BuildLogger();
+```
+
+## Logger custom destination feeding strategy
+
+It is possible to implement your own destination feeding strategy and use it with log groups as in the following code snippet:
+
+```cs
+DestinationFeedingStrategyBase customDestinationFeedingStrategy = new CustomDestinationFeedingStrategy();
+
+ILogger logger = LoggerBuilder.Logger()
+                              .NewLogGroup("group1")
+                                  .WithDestinationFeeding(customDestinationFeedingStrategy)
+                                  .ForAllLogs()
+                                  .File()
+                                      .WithPath(@".\logs1.txt")
+                                      .Add()
+                                  .File()
+                                      .WithPath(@".\logs2.txt")
+                                      .Add()
+                              .BuildLogGroup()
+                              .BuildLogger();
+```
+
+## Logger custom log creation strategy
+
+Creation strategy defines how an instance of `TacitusLogger.LogModel` is created. You can override the default log creation strategy by creating your own one and providing it to logger builder:
+
+```cs
+LogCreationStrategyBase customLogCreationStrategy = new CustomLogCreationStrategy();
+
+ILogger logger = LoggerBuilder.Logger()
+                              .WithLogCreation(customLogCreationStrategy)
+                              .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogger();
+```
+
+## Logger exception handling strategy
+
+Exception handling strategy defines how the logger copes with its own exceptions. There are three built-in strategies: `Silent`, `Log` and `Rethrow`. If not specified, `Silent` is the default strategy for all loggers. In the following code snippet the logger is explicitly coed with the exception handling strategy:
+
+```cs
+ILogger logger = LoggerBuilder.Logger()
+                              .WithExceptionHandling(ExceptionHandling.Rethrow)
+                              .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogger();
+```
+
+## Logger exception handling strategy of type Log
+In the following example the exception handling strategy of type `Log` is used. Please note, that along to the exception handling strategy the diagnostics destination also should be set as a place where the error logs from the strategy will be directed; otherwise, `Log` exception handling strategy will behave just like the `Silent`:
+
+```cs
+FileDestination diagnosticsDestination = new FileDestination("./Logger-Errors.txt");
+
+ILogger logger = LoggerBuilder.Logger()
+                                .WithDiagnostics(diagnosticsDestination)
+                                .WithExceptionHandling(ExceptionHandling.Log)
+                                .ForAllLogs()
+                                    .Console().Add()
+                                .BuildLogger();
+```
+
+## Configuring logger with the custom exception handling strategy
+
+You can implement and register your own exception handling strategy as shown in the following example:
+
+```cs
+ExceptionHandlingStrategyBase customExceptionHandlingStrategy = new CustomExceptionHandlingStrategy();
+
+ILogger logger = LoggerBuilder.Logger()
+                              .WithExceptionHandling(customExceptionHandlingStrategy)
+                              .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogger();
+```
+
+## Logger with constant log level
+
+Log level shows the minimal value of log type that will be proceeded by the logger. The following example sets log level to `Warning` which means that logs with log level less than `Warning` (that are `Info`, `Success` and `Event`) will be ignored by the logger.
+
+```cs
+LogLevel logLevel = LogLevel.Warning;
+
+ILogger logger = LoggerBuilder.Logger()
+                              .WithLogLevel(logLevel)
+                              .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogger();
+```
+## Logger with mutable log level that can be changed at runtime
+
+If you intend to modify logger's log level during the runtime, you can use `VariableValueProvider<LogLevel>` wrapper as shown in the following example. Using this class allows you to modify log level without restarting the application.
+
+```cs
+MutableSetting<LogLevel> logLevel = Setting<LogLevel>.From.Variable(LogLevel.Info);
+
+ILogger logger = LoggerBuilder.Logger()
+                              .WithLogLevel(logLevel)
+                              .ForAllLogs()
+                                  .Console().Add()
+                              .BuildLogger();
+
+logger.LogInfo("This log will be processed by logger");
+logLevel.SetValue(LogLevel.None);
+logger.LogInfo("This log will be ignored");
+```
+ 
+## Custom log serializer implementation
+
+Log serializers are used by destinations that need some textual representation of log models. For example `ConsoleDestination` needs that log text to send it to Console, `FileDestination` - to generate file path and log text to save it to the file etc. 
+
+```cs
+ILogSerializer myCustomLogSerializer = new MyCustomLogSerializer();
+
+ILogger logger = LoggerBuilder.Logger().ForAllLogs()
+                                       .File().WithCustomLogSerializer(myCustomLogSerializer)
+                                              .Add()
+                                       .BuildLogger();
+```
+
+## Guid based log ID
+
+Log ID generator is used by logger to add `string` log IDs to log models. The default log ID generator for the logger is `TacitusLogger.LogIdGenerators.GuidLogIdGenerator` and it will be added if no log ID generator is specified explicitly. Nevertheless, if you want to add it with some customizations like different GUID format or substring length you may register it explicitly as shown in the following example:
+```cs
+ILogger logger = LoggerBuilder.Logger().WithGuidLogId("N", 6)
+                                       .ForAllLogs()
+                                           .File().WithPath(@".\logs.txt").Add()
+                                       .BuildLogger(); 
+```
+
+## Null log ID
+In some cases you do not want your logs to contain any log IDs. In this case you may consider registering the logger with `TacitusLogger.LogIdGenerators.NullLogIdGenerator`. `NullLogIdGenerator` is a typical implementation of null object pattern and always generates NULL  log IDs:
+```cs
+ILogger logger = LoggerBuilder.Logger().WithNullLogId()
+                                       .ForAllLogs()
+                                           .File().WithPath(@".\logs.txt").Add()
+                                       .BuildLogger();
+```
+
+## Custom log ID generator implementation
+
+If you need some custom log ID generation logic you can create and register your own log ID generator as in the following example:
+
+```cs
+ILogIdGenerator myCustomLogIdGenerator = new MyCustomLogIdGenerator();
+
+ILogger logger13 = LoggerBuilder.Logger().WithLogIdGenerator(myCustomLogIdGenerator)
+                                         .ForAllLogs()
+                                         .File().WithPath(@".\logs.txt").Add()
+                                         .BuildLogger();
+```
+
+## More advanced configuration
+
+This is more advanced logger configuration that combines most of the previous ones:
+
+```cs
+var debugLogGroupStatus = LogGroupStatus.Inactive;
+var userServiceLogGroupStatus = LogGroupStatus.Inactive;
+ 
+ILogger logger = LoggerBuilder.Logger("App1 logs")
+                              .Contributors()
+                                  .StackTrace()
+                              .BuildContributors()
+                              .Transformers()
+                                  .StringsManual((ref string s) => s.ToLower(), true, "Lowercase")
+                              .BuildTransformers()
+                              .WithExceptionHandling(ExceptionHandling.Silent)
+                              .WithLogCreation(LogCreation.Standard)
+                              .WithLogIdGenerator(new MyCustomLogIdGenerator())
+                              .NewLogGroup("Debug")
+                                  .SetStatus(debugLogGroupStatus)
+                                  .ForAllLogs()
+                                      .Debug()
+                                          .WithSimpleTemplateLogText("$LogTypeLog: $Description | Date: $LogDate | Id: $LogId(8)")
+                                          .Add()
+                              .BuildLogGroup()
+                              .NewLogGroup("UserService logs")
+                                  .SetStatus(userServiceLogGroupStatus)
+                                  .ForRule(x => x.Context != null && x.Context.Contains("UserService"))
+                                      .File()
+                                          .WithPath(@".\UserServiceLogs-$LogDate(dd-MM-yyyy).log")
+                                          .WithExtendedTemplateLogText()
+                                          .Add()
+                              .BuildLogGroup()
+                              .NewLogGroup("Informational logs")
+                                  .WithCaching(30, 60000)
+                                  .ForRule(x => x.LogType == LogType.Info || x.LogType == LogType.Event || x.LogType == LogType.Warning)
+                                      .File()
+                                          .WithPath(@".\InformationalLogs-$LogDate(dd-MM-yyyy).log")
+                                          .WithGeneratorFuncLogText(x => $"Id: {x.LogId} | {x.LogTypeName}Log: {x.Description} | Date: {x.LogDate.ToString("dd-MM-yyyy hh.mm.ss")}")
+                                          .Add()
+                                      .Console()
+                                          .WithGeneratorFuncLogText(x => $"{x.LogTypeName}Log: {x.Description}")
+                                          .Add()
+                              .BuildLogGroup()
+                              .NewLogGroup("Important logs")
+                                  .ForRule(x => x.LogType == LogType.Error || x.LogType == LogType.Critical)
+                                      .File()
+                                          .WithPath(@".\$LogTypeLogs-$LogDate(dd-MM-yyyy).log")
+                                          .WithGeneratorFuncLogText(x => $"{x.LogTypeName}Log: {x.Description} | Date: {x.LogDate.ToString("dd-MM-yyyy hh.mm.ss")}")
+                                          .Add()
+                              .BuildLogGroup()
+                              .BuildLogger();
+```
+
+ 
 # Main components and definitions
 
 ## Logger

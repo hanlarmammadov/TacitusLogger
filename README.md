@@ -1,3 +1,95 @@
+# TacitusLogger (Alpha)
+
+> A simple yet powerful .NET logging library.
+
+Tacitus logger helps to organize your logging process to save vital execution information of your application to the variety of logging destinations.
+
+> Attention: TacitusLogger is currently in **Alpha phase**. This means you should not use it in any production code.
+
+## Installation
+
+The NuGet <a href="http://example.com/" target="_blank">package</a>:
+
+```powershell
+PM> Install-Package TacitusLogger
+```
+
+## Quickstart
+Due to implemented convention over configuration principle, using TacitusLogger could be as simple as:
+```cs
+// Configure and build your logger.
+ILogger logger = LoggerBuilder.Logger().ForAllLogs()
+                                       .File().WithPath(@".\logs.txt").Add()
+                                       .BuildLogger();
+// Write your logs.
+logger.LogError("Something bad happened!");
+
+// Or write them asynchronously.
+await logger.LogErrorAsync("Something bad happened!");
+```
+
+TacitusLogger provides an opportunity to:
+- Use several built-in, various extension and custom log destinations.
+- Group log destinations to several units called log groups.
+- Configure each log group with rule predicate to filter out logs that is eligible to be sent to this log group.
+- Configure each log group with log cache.
+- Select built-in or use custom destination feeding strategy for each log group.
+- Select built-in or use custom exception handling strategy for the logger.
+- Use built-in and custom log contributors to add runtime info to your logs.
+- Use built-in and custom log transformers to modify all logs from single place.
+- Use built-in or custom log ID generator to enrich logs with IDs.
+- Use built-in or custom log serializers to get different textual representation of the log for each log destination.
+- Change some settings like logger log level, log group status in runtime without restarting the app.  
+
+## More examples
+
+## Ways to write logs
+In TacitusLogger there are several convenient styles to write logs to the logger:
+
+### Using methods of ILogger interface:
+ ```cs
+logger.LogInfo("Operation has completed.");
+logger.LogError("Something bad has happened!");
+logger.Log("UserController", LogType.Info, "Request from the client", new { data1 = "", data2 = "" }); 
+logger.Log("UserService", LogType.Error, "Some error occurred");
+ ```
+ ### Using ILogger log builder extensions:
+
+ ```cs 
+logger.Error("Some error occurred")
+      .From(this)
+      .WithEx(exception)
+      .Tagged("Error", "Exception", "Bug")
+      .Log();
+ ```
+
+ ```cs 
+await logger.Error("Some error occurred")
+            .From(this)
+            .WithEx(exception)
+            .Tagged("Error", "Exception", "Bug")
+            .LogAsync();
+ ```
+
+### Using Log class builder methods:
+ 
+ ```cs 
+Log error = Log.Error("Some error occurred")
+               .From(this)
+               .WithEx(exception)
+               .Tagged("Error", "Exception", "Bug");
+error.To(logger);
+ ```
+
+ ```cs 
+Log error = Log.Error("Some error occurred")
+               .From(this)
+               .WithEx(exception)
+               .Tagged("Error", "Exception", "Bug");
+await error.ToAsync(logger);
+ ```
+
+
 # Main components and definitions
 
 ## Logger
@@ -117,6 +209,9 @@ As you can see, additional information includes: `LogId`, `Source` and `LogDate`
 ### Log ID
 
 Often when dealing with logs you want them to contain some sort of ID information to identify them later. This can be achieved with string `LogId` property and log ID generators. When creating LogModel object from provided `Log` object, the logger (More precisely, log creation strategy assigned to logger) populates `LogId` property with string ID using assigned log ID generator. More on log ID generators and log creation strategies see below.
+
+### Source
+Source property represents more global information about where the logging event is originated from. In default implementation this is the name of the logger which has produced current log. This means that if you have several loggers (probably, from the different applications) which send logs to the same destination, you can name them in some way that will help you when dealing with logs.
 
 ### Log date
 

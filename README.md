@@ -41,7 +41,78 @@ TacitusLogger provides an opportunity to:
 - Use built-in or custom log serializers to get different textual representation of the log for each log destination.
 - Change some settings like logger log level, log group status in runtime without restarting the app.  
 
-## More examples
+## Content
+
+
+
+[More examples](#More-examples)
+* [Ways to write logs](##Ways-to-write-logs)
+* [Examples of logger configuration](##Examples-of-logger-configuration)
+  * [Logger with single console log destination](###Logger-with-single-console-log-destination)
+  * [Logger with several log destinations](###about)
+  * [Custom log file path template](###about)
+  * [Custom log text template](###about) 
+  * [Several log groups](###about) 
+  * [Constant log group status](###about) 
+  * [Log group with status that can be changed at runtime](###about) 
+  * [Logger with log caching](###about) 
+  * [Logger with custom log cache](###about) 
+  * [Logger with several groups each with its own log cache](###about) 
+  * [Logger with log contributors](###about) 
+  * [Logger with custom log contributor](###about) 
+  * [Logger with log transformers](###about) 
+  * [Logger with custom log transformers](###about) 
+  * [Logger destination feeding strategy](###about) 
+  * [Logger custom destination feeding strategy](###about) 
+  * [Logger custom log creation strategy](###about) 
+  * [Logger exception handling strategy](###about) 
+  * [Logger exception handling strategy of type Log](###about) 
+  * [Configuring logger with the custom exception handling strategy](###about) 
+  * [Logger with constant log level](###about) 
+  * [Logger with mutable log level that can be changed at runtime](###about) 
+  * [Custom log serializer implementation](###about) 
+  * [Guid based log ID](###about) 
+  * [Null log ID](###about) 
+  * [Custom log ID generator implementation](###about) 
+  * [More advanced configuration](###about)  
+   
+[Main components and definitions](#about)
+* [Logger](##about) 
+* [Log event](##about) 
+  * [Log type](###about) 
+  * [Log description](###about) 
+  * [Log context](###about) 
+  * [Log tags](###about) 
+  * [Log items](###about) 
+* [Log model](##about) 
+  * [Log ID](###about) 
+  * [Source](###about) 
+  * [Log date](###about) 
+* [Log destinations](##about) 
+  * [Built-in destinations](###about) 
+* [Log groups](##about) 
+  * [Log group name](###about) 
+  * [Log group status](###about) 
+  * [Log filtering](###about) 
+  * [Destination feeding strategy](###about) 
+  * [Log caching](###about) 
+  * [Summary](###about) 
+* [Log creation strategy](##about) 
+  * [Resetting default time provider](###about) 
+  * [Custom log creation strategy](###about) 
+* [Log ID generators](##about) 
+* [Self diagnostics](##about) 
+* [Exception handling strategy](##about) 
+* [Log serializers](##about) 
+* [Setting providers](##about) 
+* [Log contributors](##about) 
+* [Log Transformers](##about) 
+* [Logger as a log destination](##about) 
+
+[General log flow of TacitusLogger](##about) 
+
+
+# More examples
 
 ## Ways to write logs
 In TacitusLogger there are several convenient styles to write logs to the logger:
@@ -89,9 +160,9 @@ Log error = Log.Error("Some error occurred")
 await error.ToAsync(logger);
  ```
  
-# Examples of logger configuration
+## Examples of logger configuration
 
-## Logger with single console log destination
+### Logger with single console log destination
 In the simplest form, logger could contain a single log group that proceeds all logs. The following code snippet the logger with a single log group containing one `ConsoleDestination` is configured to take all logs:
 
 ```cs
@@ -109,7 +180,7 @@ ILogger logger = LoggerBuilder.Logger().NewLogGroup()
 ```
 Nevertheless, when you have a logger that contains only one log group, you can omit `NewLogGroup()` and `BuildLogGroup()`.
  
-## Logger with several log destinations
+### Logger with several log destinations
 
 In this example logger is configured with single log group containing two log destinations - Console and Debug:
 
@@ -129,7 +200,7 @@ groupDestinations.BuildLogGroup();
 Logger logger = loggerBuilder.BuildLogger();
 ```
 
-## Custom log file path template
+### Custom log file path template
 In this example file destination is configured with file path template that will be used to save logs. Template contains placeholders `$Source`, `$LogType`, `$LogDate(dd-MM-yyyy)` that will be replaced with according properties of log models thus forming various file paths. If file exists it will be appended, otherwise, a new file will be created with all preceding directories. When selecting file path template make sure the application has the according write permissions. 
 
 ```cs
@@ -585,7 +656,7 @@ Logger is the main entry point for all writing logs and usually it is the only d
 ```
 Lets discuss them briefly:
 
-### Log type.
+### Log type
 `TacitusLogger.LogType` is an `enum` defining the following names:
 ```cs
     public enum LogType
@@ -882,7 +953,7 @@ public abstract class SynchronousLogIdGeneratorBase : ILogIdGenerator
 
 ------------------------------------------------------------------
 
-## Self diagnostics.
+## Self diagnostics
 
 TacitusLogger provides the ability to log different information regarding to the logger's itself health. Every logger has diagnostics manager of type `TacitusLogger.Diagnostics.DiagnosticsManagerBase` that is used by logger itself or injected into its exception handling strategy. If not specified explicitly, by default, it is `TacitusLogger.Diagnostics.DiagnosticsManager`. Besides the diagnostics manager, logger can be provided with diagnostics destination using `SetDiagnosticsDestination(...)` method of logger class or `WithDiagnostics(...)`. If set, this destination is used by diagnostics manager to send logs related to the logger itself, which could be logger start configuration description and logger errors sent by exception handling strategy.
  
@@ -955,44 +1026,6 @@ TacitusLogger has five built in log serializers out of the box:
 `JsonLogSerializer` transforms log model object into its JSON representation, `SimpleTemplateLogSerializer`, `ExtendedTemplateLogSerializer` and `FilePathTemplateLogSerializer` uses templates with placeholders to get plaintext representation of log model, `GeneratorFunctionLogSerializer` uses delegate of type `TacitusLogger.LogDataFunc<string>` provided by user to generate strings from log models.
 
 ------------------------------------------------------------------
-
-## Log contributors
-
-Log contributors are lightweight plugins that are attached to logger and automatically add various runtime information to every created log model as additional log items. Every contributor produces a single log item that is added to the collection of log items of log model by standard log creation strategy.
-
-Every log contributor should inherit from `TacitusLogger.Contributors.LogContributorBase` abstract class:
-```cs
-public abstract class LogContributorBase
-{
-    protected LogContributorBase(string name);
-
-    public string Name { get; }
-    public Setting<bool> IsActive { get; }
-
-    public virtual void Dispose();
-    public virtual LogItem ProduceLogItem();
-    public void SetActive(Setting<bool> isActive);
-    protected abstract object GenerateLogItemData();
-}
-```
-and implement `GenerateLogItemData()` method that is supposed to return specific log item value.
-
-When creating a log model, log creation strategy strategy iterates through all **Active** log contributors (inactive ones are ignored) and harvests log items calling `ProduceLogItem()` method of each contributor.
- 
-TacitusLogger package contains four log contributors out of the box:   
-2. `TacitusLogger.Contributors.StackTraceContributor`
-4. `TacitusLogger.Contributors.UserDataContributor`
- 
-#### StackTraceContributor
-
-`StackTraceContributor` produces a log item with the default name `Stack trace` and the value containing stack trace information at the moment of writing log.
- 
-#### UserDataContributor
-
-`UserDataContributor` defines an only public constructor that takes user defined name and value, and uses them to add log item to all created logs.
-
-------------------------------------------------------------------
-
 ## Setting providers
 
 Sometimes you want to make change to different settings of logger without restarting the whole application and that is where setting providers can help. Setting providers sets some property to the logger or its components in the form of injection thus providing the ability to manage the value of this property during the runtime.
@@ -1037,6 +1070,45 @@ public class MutableSetting<TValue> : Setting<TValue>
 
 As you can see from the above code snippet, `TacitusLogger.MutableSetting<TValue>` has the method `SetValue()` which is the exact one that is used to change the wrapped value during the execution.
 
+------------------------------------------------------------------
+
+## Log contributors
+
+Log contributors are lightweight plugins that are attached to logger and automatically add various runtime information to every created log model as additional log items. Every contributor produces a single log item that is added to the collection of log items of log model by standard log creation strategy.
+
+Every log contributor should inherit from `TacitusLogger.Contributors.LogContributorBase` abstract class:
+```cs
+public abstract class LogContributorBase
+{
+    protected LogContributorBase(string name);
+
+    public string Name { get; }
+    public Setting<bool> IsActive { get; }
+
+    public virtual void Dispose();
+    public virtual LogItem ProduceLogItem();
+    public void SetActive(Setting<bool> isActive);
+    protected abstract object GenerateLogItemData();
+}
+```
+and implement `GenerateLogItemData()` method that is supposed to return specific log item value.
+
+When creating a log model, log creation strategy strategy iterates through all **Active** log contributors (inactive ones are ignored) and harvests log items calling `ProduceLogItem()` method of each contributor.
+ 
+TacitusLogger package contains four log contributors out of the box:   
+2. `TacitusLogger.Contributors.StackTraceContributor`
+4. `TacitusLogger.Contributors.UserDataContributor`
+ 
+#### StackTraceContributor
+
+`StackTraceContributor` produces a log item with the default name `Stack trace` and the value containing stack trace information at the moment of writing log.
+ 
+#### UserDataContributor
+
+`UserDataContributor` defines an only public constructor that takes user defined name and value, and uses them to add log item to all created logs.
+
+------------------------------------------------------------------
+ 
 ## Log Transformers
 
 Log transformers are added to the logger and intended to make arbitrary modifications to log model after the latter is created and before is sent to log groups. Log transformers could be useful in various situations, such as strings localization, beautifying, making custom changes that should be applicable to all logs etc. Log transformers are function at logger level before the created log models reach the log groups. Logger can have zero or many log transformers and they are applied to log model is the same order in which they were added to the logger.
@@ -1110,7 +1182,7 @@ public class StringsManualTransformer : StringsTransformerBase
 }
 ```
 
-## Logger as a log destination.
+## Logger as a log destination
 
 As you can see from `TacitusLogger.Logger` class definition, along with other interfaces it implements `TacitusLogger.Destinations.ILogDestination`:
 ```cs
@@ -1142,7 +1214,7 @@ Logger logger = LoggerBuilder.Logger("Main").ForAllLogs()
 ```
 
 
-## General log flow of TacitusLogger.
+# General log flow of TacitusLogger
 In this section we will discuss in general the journey which is made by log event and log model after the former is sent to the logger.
 #### Synchronous flow.
 Synchronous flow is performed when synchronous `Log(...)` method is called by user either directly or through different extension methods that finally utilize this entry point.

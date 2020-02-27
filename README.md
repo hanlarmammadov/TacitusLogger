@@ -42,11 +42,7 @@ TacitusLogger provides an opportunity to:
 - Change some settings like logger log level, log group status in runtime without restarting the app.  
 
 ## Content
-
-- [TacitusLogger (Alpha)](#TacitusLogger-Alpha)
-  - [Installation](#Installation)
-  - [Quickstart](#Quickstart)
-  - [Content](#Content)
+  
 - [More examples](#More-examples)
   - [Ways to write logs](#Ways-to-write-logs)
     - [Using methods of ILogger interface:](#Using-methods-of-ILogger-interface)

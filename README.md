@@ -211,7 +211,7 @@ ILogger logger = LoggerBuilder.Logger("Main logger").ForAllLogs()
                                                     .BuildLogger();
 ```
 
-## Custom log text template
+### Custom log text template
  
 ```cs
 ILogger logger = LoggerBuilder.Logger().ForAllLogs()
@@ -219,7 +219,7 @@ ILogger logger = LoggerBuilder.Logger().ForAllLogs()
                                                  .Add()
                                        .BuildLogger();
 ```
-## Several log groups
+### Several log groups
 
 Here a logger with two log groups is configured. First log group named `Not important` receives `Info` type logs and sends them to console and debug destinations. Second log group - `Important` writes `Error`, `Failure` and `Critical` logs to file and console.
 
@@ -256,7 +256,7 @@ impLogsDestinations.BuildLogGroup();
 ILogger logger = loggerBuilder.BuildLogger();
 ```
 
-## Constant log group status
+### Constant log group status
 
 In the following code snippet log group `"group1"` is configured to be inactive:
 ```cs
@@ -270,7 +270,7 @@ ILogger logger = LoggerBuilder.Logger().NewLogGroup("group1")
                                        .BuildLogger();
 ```
 
-## Log group with status that can be changed at runtime
+### Log group with status that can be changed at runtime
 In this example value provider of type `TacitusLogger.MutableSetting<LogGroupStatus>` is used to manage the value for log group status. After building the logger the value provider used to change log group status to `Inactive` at runtime:
 ```cs
 MutableSetting<LogGroupStatus> logGroupStatus = Setting<LogGroupStatus>.From.Variable(LogGroupStatus.Active);
@@ -286,7 +286,7 @@ logger.LogInfo("This log will be processed by group1");
 logGroupStatus.SetValue(LogGroupStatus.Inactive);
 logger.LogInfo("This log will not, because group1 is now inactive");
 ```
-## Logger with log caching
+### Logger with log caching
 
 The following example configures log caching for the log group `"Groups with cache"`: Cache size to 20 logs and cache time to 60 seconds.
 
@@ -298,7 +298,7 @@ ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Groups with ca
                                                     .BuildLogger();
 ```
 
-## Logger with custom log cache
+### Logger with custom log cache
 In this example the custom log cache implementation is registered with the log group `"Groups with cache"`.
 
 ```cs
@@ -309,7 +309,7 @@ ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Groups with ca
                                                         .Console().Add()
                                                     .BuildLogger();
 ```
-## Logger with several groups each with its own log cache
+### Logger with several groups each with its own log cache
 Each log group can have its own caching configuration:
 ```cs
 ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Group1")
@@ -329,7 +329,7 @@ ILogger logger = LoggerBuilder.Logger("Main logger").NewLogGroup("Group1")
                                                     .BuildLogger();
 ```
 
-## Logger with log contributors
+### Logger with log contributors
 
 The following code snippet adds `StackTraceContributor` log contributor to the logger. Log contributors add additional specific data to each log:
 
@@ -346,7 +346,7 @@ ILogger logger = LoggerBuilder.Logger()
                                .BuildLogGroup()
                                .BuildLogger();
 ```
-## Logger with custom log contributor
+### Logger with custom log contributor
   
 ```cs
 LogContributorBase customContributor = new MyCustomContributor();
@@ -361,7 +361,7 @@ ILogger logger = LoggerBuilder.Logger()
                                 .BuildLogGroup()
                                 .BuildLogger();
 ```
-## Logger with log transformers
+### Logger with log transformers
 The following code snippet adds `TacitusLogger.Transformers.StringsManualTransformer` log transformer to the logger. Log transformers allow to modify all logs before they are sent to log groups. In this case `StringsManualTransformer` is used to modify all strings to lower case (Note that no null checks are performed inside the delegate, that is because it  `StringsManualTransformer` filters out null strings and does not sends them to the delegate):
 ```cs
 ILogger logger = LoggerBuilder.Logger()
@@ -376,7 +376,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger with custom log transformers
+### Logger with custom log transformers
 In the following example in addition to the transformer from the previous example, another custom transformer is added to the logger: 
 
 ```cs
@@ -395,7 +395,7 @@ ILogger logger = LoggerBuilder.Logger()
 ```
 
 
-## Logger destination feeding strategy
+### Logger destination feeding strategy
 Each log group has its own destination feeding strategy which defines how log group sends provided logs to its destinations. There are two built-in strategies - Greedy and FirstSuccess. If not specified, greedy is the default strategy for all log groups. The following example configures two log groups with feeding strategies specified explicitly:
 ```cs
 ILogger logger = LoggerBuilder.Logger()
@@ -414,7 +414,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger custom destination feeding strategy
+### Logger custom destination feeding strategy
 
 It is possible to implement your own destination feeding strategy and use it with log groups as in the following code snippet:
 
@@ -435,7 +435,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger custom log creation strategy
+### Logger custom log creation strategy
 
 Creation strategy defines how an instance of `TacitusLogger.LogModel` is created. You can override the default log creation strategy by creating your own one and providing it to logger builder:
 
@@ -449,7 +449,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger exception handling strategy
+### Logger exception handling strategy
 
 Exception handling strategy defines how the logger copes with its own exceptions. There are three built-in strategies: `Silent`, `Log` and `Rethrow`. If not specified, `Silent` is the default strategy for all loggers. In the following code snippet the logger is explicitly coed with the exception handling strategy:
 
@@ -461,7 +461,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger exception handling strategy of type Log
+### Logger exception handling strategy of type Log
 In the following example the exception handling strategy of type `Log` is used. Please note, that along to the exception handling strategy the diagnostics destination also should be set as a place where the error logs from the strategy will be directed; otherwise, `Log` exception handling strategy will behave just like the `Silent`:
 
 ```cs
@@ -475,7 +475,7 @@ ILogger logger = LoggerBuilder.Logger()
                                 .BuildLogger();
 ```
 
-## Configuring logger with the custom exception handling strategy
+### Configuring logger with the custom exception handling strategy
 
 You can implement and register your own exception handling strategy as shown in the following example:
 
@@ -489,7 +489,7 @@ ILogger logger = LoggerBuilder.Logger()
                               .BuildLogger();
 ```
 
-## Logger with constant log level
+### Logger with constant log level
 
 Log level shows the minimal value of log type that will be proceeded by the logger. The following example sets log level to `Warning` which means that logs with log level less than `Warning` (that are `Info`, `Success` and `Event`) will be ignored by the logger.
 
@@ -502,7 +502,7 @@ ILogger logger = LoggerBuilder.Logger()
                                   .Console().Add()
                               .BuildLogger();
 ```
-## Logger with mutable log level that can be changed at runtime
+### Logger with mutable log level that can be changed at runtime
 
 If you intend to modify logger's log level during the runtime, you can use `VariableValueProvider<LogLevel>` wrapper as shown in the following example. Using this class allows you to modify log level without restarting the application.
 
@@ -520,7 +520,7 @@ logLevel.SetValue(LogLevel.None);
 logger.LogInfo("This log will be ignored");
 ```
  
-## Custom log serializer implementation
+### Custom log serializer implementation
 
 Log serializers are used by destinations that need some textual representation of log models. For example `ConsoleDestination` needs that log text to send it to Console, `FileDestination` - to generate file path and log text to save it to the file etc. 
 
@@ -533,7 +533,7 @@ ILogger logger = LoggerBuilder.Logger().ForAllLogs()
                                        .BuildLogger();
 ```
 
-## Guid based log ID
+### Guid based log ID
 
 Log ID generator is used by logger to add `string` log IDs to log models. The default log ID generator for the logger is `TacitusLogger.LogIdGenerators.GuidLogIdGenerator` and it will be added if no log ID generator is specified explicitly. Nevertheless, if you want to add it with some customizations like different GUID format or substring length you may register it explicitly as shown in the following example:
 ```cs
@@ -543,7 +543,7 @@ ILogger logger = LoggerBuilder.Logger().WithGuidLogId("N", 6)
                                        .BuildLogger(); 
 ```
 
-## Null log ID
+### Null log ID
 In some cases you do not want your logs to contain any log IDs. In this case you may consider registering the logger with `TacitusLogger.LogIdGenerators.NullLogIdGenerator`. `NullLogIdGenerator` is a typical implementation of null object pattern and always generates NULL  log IDs:
 ```cs
 ILogger logger = LoggerBuilder.Logger().WithNullLogId()
@@ -552,7 +552,7 @@ ILogger logger = LoggerBuilder.Logger().WithNullLogId()
                                        .BuildLogger();
 ```
 
-## Custom log ID generator implementation
+### Custom log ID generator implementation
 
 If you need some custom log ID generation logic you can create and register your own log ID generator as in the following example:
 
@@ -565,7 +565,7 @@ ILogger logger13 = LoggerBuilder.Logger().WithLogIdGenerator(myCustomLogIdGenera
                                          .BuildLogger();
 ```
 
-## More advanced configuration
+### More advanced configuration
 
 This is more advanced logger configuration that combines most of the previous ones:
 
@@ -622,7 +622,7 @@ ILogger logger = LoggerBuilder.Logger("App1 logs")
  
 # Main components and definitions
 
-## Logger
+### Logger
 
 The central definition in TacitusLogger library is the Logger - an implementation of `TacitusLogger.ILogger` interface:
 
@@ -638,13 +638,13 @@ TacitusLogger contains an only implementation of this interface - `TacitusLogger
 Logger is the main entry point for all writing logs and usually it is the only dependency you want to inject into your classes. Logger's creation could be an expensive operation (depending on used components) and it's lifetime should be singleton. Its implementation of `ILogger` interface if fully thread safe, which means you are free to use singleton logger as an `ILogger` from several threads. As a contrary, logger's configuration (adding log groups, destinations etc) is not thread safe.
 
 ------------------------------------------------------------------
-## Log event
+### Log event
 `TacitusLogger.Log` class contains user-provided information about the logging event. These are the properties shown in the following listing:
 
 ```cs
     public class Log 
     {
-        // Constructors goes here... 
+        // Constructors go here... 
 
         public string Context { get; }
         public LogType Type { get; }
@@ -652,12 +652,12 @@ Logger is the main entry point for all writing logs and usually it is the only d
         public IList<string> Tags { get; }
         public IList<LogItem> Items { get; }
 
-        // Other members goes here...
+        // Other members go here...
     }
 ```
 Lets discuss them briefly:
 
-### Log type
+#### Log type
 `TacitusLogger.LogType` is an `enum` defining the following names:
 ```cs
     public enum LogType
@@ -687,16 +687,16 @@ Critical | 32    | Logs representing some critical situations.
 As with all `Log` properties, log type meaning is closely related to user's interpretations - it is up to user, who decides, for example, what is difference between Error logs and Failure logs.
 There is another enum closely related with `LogType` - `LogLevel` that will be discussed #####.
 
-### Log description. 
+#### Log description. 
 String property containing log event description.
 
-### Log context.
+#### Log context.
 Log context is a string property that is used to provide information related to the place and circumstances of the logging event. It can contain any string representation of what user considers as "context of the logging event" - usually these are class and method names, or some custom piece of data. Well chosen log context easily localize "the place" of the event thus easing troubleshooting.
  
-### Log tags.
+#### Log tags.
 Tags are supposed as short strings that beautify the log with additional information useful in the following classification and research. Every log contains a `Tags` property - a list of tags, that can contain any number of tag strings, meaningful to logger user. For convenience, TacitusLogger comes with common tag strings in class `TacitusLogger.Common.Tags`.
 
-### Log items. 
+#### Log items. 
 In the most circumstances log description string is not enough to describe the log event: Usually you want to include additional information in form of textual data, various objects, exceptions and so on. In TacitusLogger this could be achieved by means of Log items. Every log object contains a list of `LogItem` objects which store some peace of named data. Every log item has `Name` property that describes the item and `Value` property that contains related data.
  
 ```cs
@@ -713,7 +713,7 @@ In the most circumstances log description string is not enough to describe the l
  Final representation of log item's value could be various and completely depends on log serializer. Usually, when textual representation is needed, log items values are represented in JSON format.
 
 ------------------------------------------------------------------
-## Log model
+### Log model
 While **log event** contains user provided information about the event, **log model** contains full information about the writing log ready to be consumed by log destinations. Log model is defined by `TacitusLogger.LogModel` class, which have the following fields:
 
 ```cs 
@@ -736,20 +736,20 @@ While **log event** contains user provided information about the event, **log mo
 ```
 As you can see, additional information includes: `LogId`, `Source` and `LogDate`. Besides that, `LogItems` may contain additional items if logger is configured with log contributors (for additional information see log contributors section of this document).
 
-### Log ID
+#### Log ID
 
 Often when dealing with logs you want them to contain some sort of ID information to identify them later. This can be achieved with string `LogId` property and log ID generators. When creating LogModel object from provided `Log` object, the logger (More precisely, log creation strategy assigned to logger) populates `LogId` property with string ID using assigned log ID generator. More on log ID generators and log creation strategies see below.
 
-### Source
+#### Source
 Source property represents more global information about where the logging event is originated from. In default implementation this is the name of the logger which has produced current log. This means that if you have several loggers (probably, from the different applications) which send logs to the same destination, you can name them in some way that will help you when dealing with logs.
 
-### Log date
+#### Log date
 
 `LogDate`, obviously, is a DateTime field that contains date of creation of log model. As with log id, this field is set by log creation strategy assigned to each logger. Depending on settings, it could hold local or UTC date and time. 
 
 ------------------------------------------------------------------
 
-## Log destinations
+### Log destinations
 
 In TacitusLogger log destination is an object that represents a target where the log will be written to. It could be a file system, console, email, database etc. Log destinations are feeded with `LogModel` models and encapsulate all logic related to how these models will be transformed to specific form (file record, console output, email body and subject, db record etc) and sent to the specified targets - the logger have no idea about destination-specific logic. It is important to note that log destinations NEVER mutate provided log models. Violating this rule when implementing your custom destinations can lead to various undesirable consequences. You can register as many log destinations as you need with a single logger. 
 
@@ -763,7 +763,7 @@ public interface ILogDestination : IDisposable
 ```
 `ILogDestination` interface contains two methods, both of them takes the `LogModel[]` models array. Second method is an asynchronous counterpart of first one and takes an optional cancellation token parameter.
  
-### Built-in destinations 
+#### Built-in destinations 
 
 The TacitusLogger has 4 built-in log destinations:   
 `TacitusLogger.Destinations.Console.ConsoleDestination`  
@@ -777,7 +777,7 @@ Logger does not own and manage log destinations by self. There are intermediate 
 
 ------------------------------------------------------------------
 
-## Log groups
+### Log groups
 
 Log groups represents an additional layer in TacitusLogger which gives the potential to configure loggers to more advanced log flow including log filtering and caching. Each log group contains log group status which can be used to toggle the group on-off. Every log group implements the `TacitusLogger.LogGroupBase` abstract class:
 ```cs
@@ -794,10 +794,10 @@ Log groups represents an additional layer in TacitusLogger which gives the poten
 ```
 TacitusLogger contains an only implementation of this interface - `TacitusLogger.LogGroup` class which is the default implementation. In all further documentation unless explicitly stated otherwise, when we say log group we mean exactly this implementation of the `TacitusLogger.LogGroupBase` abstract class.
 
-### Log group name
+#### Log group name
 Every log group has its name that can be useful during the configuration process. If log group name was not specified during the creation of log group, a random GUID-based name will be used. Name should be unique within the given logger which means no two log groups with the same name can be attached to the same logger. Log groups names do not affect the log models in any way.
 
-### Log group status
+#### Log group status
 Every log group has its status of enum type `TacitusLogger.LogGroupStatus`:
 
 ```cs
@@ -812,11 +812,11 @@ Only active groups are considered by logger for log sending, inactive groups are
 If not specified explicitly, by default, all log groups are created with `Active` status.
 
 
-### Log filtering
+#### Log filtering
 
 The main purpose of log groups is to group log destinations by filtering rule. Here is how it works. Every log group contains a **rule predicate** which is simply a delegate of type `TacitusLogger.LogModelFunc<bool>` that takes `LogModel` object as a single parameter and returns the `Boolean`. When the `Log` object has been received and `LogModel` object has been constructed, the logger iterates over all **active** log groups and checks their eligibility to take the log model by calling its `IsEligible()` method. It is inside this method where the log rule predicate is executed and its `Boolean` result is returned to the logger.
 
-### Destination feeding strategy
+#### Destination feeding strategy
 
 The strategy of sending logs to destinations inside a single log group is implemented by means of destination feeding strategies assigned to that log group. List of possible strategies could be found in `TacitusLogger.DestinationFeeding` enum:
 ```cs
@@ -839,7 +839,7 @@ public abstract class DestinationFeedingStrategyBase
 This strategy could be useful if you have several destination one of which is primary and others just in case if first one fails to write log.  
 Also, you should take into consideration that some times a destination could fail silently without throwing. For example a destination that sends mails using SMTP server may not know that the mail it sent failed to reach the recipient and will not throw any exception. In such circumstances the `FirstSuccess` strategy, obviously, will behave not as expected to.
  
-### Log caching 
+#### Log caching 
 Another thing that is done on the log group level is log caching. Usually when there are a lot of logs per minute, sending each log to log destinations could be expensive. Especially if writing to destinations is related with opening-closing and holding resources. This is where log caching can help. 
 When log group has cache activated, it serves logs differently. Instead of sending each log to destinations immediately after receiving, log group places them into the cache. Each time the cache receives a log model it checks fulfillment of some condition (for example the specific amount of logs have been cached or specified cache time has been expired) and if the check succeeds it immediately **flushes** returning all collected logs which are then sent to destinations **at once** within an array (saying it more precisely, not to destinations directly but to destination feeding strategy object).
 An important thing here to note is that sending logs to destinations at once in the form of array **by no means guarantee** that the given destination will not process them *separately*. Performance gain here is strictly related to log destination type and its implementation. For some types of destinations logs caching could be completely useless, for example for destination that sends emails, or destination that writes to console. But in many cases caching could be quite useful in terms of performance, for example if the destination writes to the file (or files) or to MongoDb database.
@@ -861,7 +861,7 @@ Custom implementations of `ILogCache` have to implement `AddToCache` in a way th
 2. When called with `forceToFlush = true` it should always flush.
 3. Flushing should clear the inner collection of the cache.
  
- ### Summary
+#### Summary
 
 To summarize, every log group has:
 1. Unique **name** that could be used during configuration.
@@ -873,7 +873,7 @@ To summarize, every log group has:
 
 
 ------------------------------------------------------------------
-## Log creation strategy
+### Log creation strategy
 After the logger gets `Log` object that contains log event data provided by user, it should create `LogModel` object which contains complete picture about the logging event and which will be delivered to log destinations through the TacitusLogger pipeline.  The TacitusLogger currently contains only one log creation strategy - `Standard`:
 ```cs
     public enum LogCreation
@@ -886,7 +886,7 @@ This log creation strategy is implemented in `TacitusLogger.Strategies.LogCreati
 The `Standard` log creation strategy works this way: it creates an instance of `LogModel` populates it with data from the `Log` object, populates `Source` property with the provided one, adds log date using an instance of `TacitusLogger.Components.Time.ITimeProvider` and considering `UseUtcTime` flag provided during the logger configuration; if logger was configured with (active) log contributors, the strategy retrieves their log items and adds to the `LogItems` array of the log model.
 
 
-### Resetting default time provider
+#### Resetting default time provider
 As it was mentioned above time provider that is an implementation of `TacitusLogger.Components.Time.ITimeProvider` is used by standard log creation strategy to set log dates:
 
 ```cs
@@ -899,7 +899,7 @@ public interface ITimeProvider
 
  In some situations (for example while testing custom log destinations) you may want to change the default time provider that is `TacitusLogger.Components.Time.SystemTimeProvider` to some custom implementation. You can do this by using `ResetTimeProvider` method of `TacitusLogger.Strategies.LogCreation.StandardLogCreationStrategy` object.
 
-### Custom log creation strategy
+#### Custom log creation strategy
 
 If you need some custom logic for creating `LogModel` instances, you can create and register your own implementation of log creation strategy by deriving from `TacitusLogger.Strategies.LogCreation.LogCreationStrategyBase` abstract class:
 
@@ -925,7 +925,7 @@ As you see from the above snippet, to do this you need to implement two abstract
 
 ------------------------------------------------------------------
 
-## Log ID generators
+### Log ID generators
  
 As it was mentioned all logs contain LogId field of type `string`. It is not mandatory for logs to have this field populated - it can contain `null` value for all logs. Nevertheless, in most situations you want your logs to contain some sort of ID to identify logs. Log ID generator as the name implies, used to generate string log IDs that are added to logs. If not specified explicitly, `TacitusLogger.LogIdGenerators.GuidLogIdGenerator` is used with the logger by default.  
 All log ID generators implement `TacitusLogger.LogIdGenerators.ILogIdGenerator` interface:
@@ -954,13 +954,13 @@ public abstract class SynchronousLogIdGeneratorBase : ILogIdGenerator
 
 ------------------------------------------------------------------
 
-## Self diagnostics
+### Self diagnostics
 
 TacitusLogger provides the ability to log different information regarding to the logger's itself health. Every logger has diagnostics manager of type `TacitusLogger.Diagnostics.DiagnosticsManagerBase` that is used by logger itself or injected into its exception handling strategy. If not specified explicitly, by default, it is `TacitusLogger.Diagnostics.DiagnosticsManager`. Besides the diagnostics manager, logger can be provided with diagnostics destination using `SetDiagnosticsDestination(...)` method of logger class or `WithDiagnostics(...)`. If set, this destination is used by diagnostics manager to send logs related to the logger itself, which could be logger start configuration description and logger errors sent by exception handling strategy.
  
 ------------------------------------------------------------------
 
-## Exception handling strategy
+### Exception handling strategy
 
 Exception handling strategy defines how the logger should handle its own exceptions in `Log(...)` and `LogAsync(...)` methods. There are three built-in exception handling strategies as seen from `TacitusLogger.ExceptionHandling`:
 ```cs
@@ -1005,7 +1005,7 @@ Every time exception is caught in `Log(...)` and `LogAsync(...)` methods, accord
 
 ------------------------------------------------------------------
 
-## Log serializers
+### Log serializers
 
 Log serializers' responsibility is to create some textual representation of provided log model. Depending on serializer's implementation, this could be plain text, JSON or XML. Log serializers are used within log destinations, and help to decouple creating textual representation of the log from the specific log destination logic. You are not obligated to use serializers in your custom log destination but if you need some textual representation within your destination it would be a good practice to delegate the work to serializers and give users opportunity to inject them to your log destination.  
  
@@ -1027,7 +1027,7 @@ TacitusLogger has five built in log serializers out of the box:
 `JsonLogSerializer` transforms log model object into its JSON representation, `SimpleTemplateLogSerializer`, `ExtendedTemplateLogSerializer` and `FilePathTemplateLogSerializer` uses templates with placeholders to get plaintext representation of log model, `GeneratorFunctionLogSerializer` uses delegate of type `TacitusLogger.LogDataFunc<string>` provided by user to generate strings from log models.
 
 ------------------------------------------------------------------
-## Setting providers
+### Setting providers
 
 Sometimes you want to make change to different settings of logger without restarting the whole application and that is where setting providers can help. Setting providers sets some property to the logger or its components in the form of injection thus providing the ability to manage the value of this property during the runtime.
 
@@ -1073,7 +1073,7 @@ As you can see from the above code snippet, `TacitusLogger.MutableSetting<TValue
 
 ------------------------------------------------------------------
 
-## Log contributors
+### Log contributors
 
 Log contributors are lightweight plugins that are attached to logger and automatically add various runtime information to every created log model as additional log items. Every contributor produces a single log item that is added to the collection of log items of log model by standard log creation strategy.
 
@@ -1110,7 +1110,7 @@ TacitusLogger package contains four log contributors out of the box:
 
 ------------------------------------------------------------------
  
-## Log Transformers
+### Log Transformers
 
 Log transformers are added to the logger and intended to make arbitrary modifications to log model after the latter is created and before is sent to log groups. Log transformers could be useful in various situations, such as strings localization, beautifying, making custom changes that should be applicable to all logs etc. Log transformers are function at logger level before the created log models reach the log groups. Logger can have zero or many log transformers and they are applied to log model is the same order in which they were added to the logger.
   
@@ -1183,7 +1183,7 @@ public class StringsManualTransformer : StringsTransformerBase
 }
 ```
 
-## Logger as a log destination
+### Logger as a log destination
 
 As you can see from `TacitusLogger.Logger` class definition, along with other interfaces it implements `TacitusLogger.Destinations.ILogDestination`:
 ```cs
@@ -1215,7 +1215,7 @@ Logger logger = LoggerBuilder.Logger("Main").ForAllLogs()
 ```
 
 
-# General log flow of TacitusLogger
+## General log flow of TacitusLogger
 In this section we will discuss in general the journey which is made by log event and log model after the former is sent to the logger.
 #### Synchronous flow.
 Synchronous flow is performed when synchronous `Log(...)` method is called by user either directly or through different extension methods that finally utilize this entry point.

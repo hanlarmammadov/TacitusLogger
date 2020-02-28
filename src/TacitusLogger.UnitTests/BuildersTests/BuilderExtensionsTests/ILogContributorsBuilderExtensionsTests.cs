@@ -54,22 +54,21 @@ namespace TacitusLogger.UnitTests.BuildersTests.BuilderExtensionsTests
         #region Tests for Custom method
 
         [Test]
-        public void Custom_Taking_LogContributor_And_IsActive_Bool_Flag_When_Called_Calls_Custom_Method_Of_ILogContributorsBuilder()
+        public void Custom_Taking_LogContributor_When_Called_Calls_Custom_Method_Of_ILogContributorsBuilder()
         {
             // Arrange
             var logContributorsBuilderMock = new Mock<ILogContributorsBuilder>();
             var logContributorBase = new Mock<LogContributorBase>("name1").Object;
-            bool isActive = false;
 
             // Act
-            ILogContributorsBuilderExtensions.Custom(logContributorsBuilderMock.Object, logContributorBase, isActive);
+            ILogContributorsBuilderExtensions.Custom(logContributorsBuilderMock.Object, logContributorBase);
 
             // Assert
-            logContributorsBuilderMock.Verify(x => x.Custom(logContributorBase, It.Is<Setting<bool>>(s => s.Value == isActive)), Times.Once);
+            logContributorsBuilderMock.Verify(x => x.Custom(logContributorBase, It.Is<Setting<bool>>(s => s.Value == true)), Times.Once);
         }
 
         [Test]
-        public void Custom_Taking_LogContributor_And_IsActive_Bool_Flag_When_Called_Returns_Result_Of_Called_Custom_Method_Of_ILogContributorsBuilder()
+        public void Custom_Taking_LogContributor_When_Called_Returns_Result_Of_Called_Custom_Method_Of_ILogContributorsBuilder()
         {
             // Arrange
             var logContributorsBuilderMock = new Mock<ILogContributorsBuilder>();
@@ -77,7 +76,7 @@ namespace TacitusLogger.UnitTests.BuildersTests.BuilderExtensionsTests
             logContributorsBuilderMock.Setup(x => x.Custom(It.IsAny<LogContributorBase>(), It.IsAny<Setting<bool>>())).Returns(expectedLogContributorsBuilder);
 
             // Act
-            var returnedResult = ILogContributorsBuilderExtensions.Custom(logContributorsBuilderMock.Object, new Mock<LogContributorBase>("name1").Object, false);
+            var returnedResult = ILogContributorsBuilderExtensions.Custom(logContributorsBuilderMock.Object, new Mock<LogContributorBase>("name1").Object);
 
             // Assert
             Assert.AreEqual(expectedLogContributorsBuilder, returnedResult);

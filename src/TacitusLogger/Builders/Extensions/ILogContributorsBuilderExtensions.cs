@@ -11,14 +11,14 @@ namespace TacitusLogger.Builders
         {
             return self.Custom(new StackTraceContributor(name), isActive);
         }
-        public static ILogContributorsBuilder StackTrace(this ILogContributorsBuilder self, bool isActive = true, string name = "Stack trace")
+        public static ILogContributorsBuilder StackTrace(this ILogContributorsBuilder self, string name = "Stack trace")
         {
-            return self.Custom(new StackTraceContributor(name), isActive);
+            return self.Custom(new StackTraceContributor(name), true);
         }
 
-        public static ILogContributorsBuilder Custom(this ILogContributorsBuilder self, LogContributorBase logContributor, bool isActive = true)
+        public static ILogContributorsBuilder Custom(this ILogContributorsBuilder self, LogContributorBase logContributor)
         {
-            return self.Custom(logContributor, isActive);
+            return self.Custom(logContributor, true);
         }
     }
 }

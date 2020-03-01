@@ -41,7 +41,7 @@ namespace TacitusLogger.Builders
         /// </summary>
         /// <param name="logSerializer"></param>
         /// <returns>Self.</returns>
-        public ITextWriterDestinationBuilder WithCustomLogSerializer(ILogSerializer logSerializer)
+        public ITextWriterDestinationBuilder WithLogSerializer(ILogSerializer logSerializer)
         {
             if (_logSerializer != null)
                 throw new InvalidOperationException("Log serializer has already been set");

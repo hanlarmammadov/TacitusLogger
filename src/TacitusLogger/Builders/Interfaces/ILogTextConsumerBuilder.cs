@@ -7,6 +7,6 @@ namespace TacitusLogger.Builders
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IBuilderWithLogTextSerialization<TBuilder>
     {
-        TBuilder WithCustomLogSerializer(ILogSerializer logSerializer);
+        TBuilder WithLogSerializer(ILogSerializer logSerializer);
     }
 }

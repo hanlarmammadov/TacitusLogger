@@ -39,11 +39,11 @@ namespace TacitusLogger.IntegrationTests
         }
 
         [Test]
-        public void Logger_WithOneConsoleDestinationWithCustomLogSerializerForAllLogs_SendsLogToConsoleFacadeSuccessfully()
+        public void Logger_WithOneConsoleDestinationWithLogSerializerForAllLogs_SendsLogToConsoleFacadeSuccessfully()
         {
             //Build log
             var logSerializerMocks = LogSerializerThatReturnsPredefinedString("serialized log");
-            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().Console().WithCustomLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
+            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().Console().WithLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
             //Create facade mocks 
             var consoleFacadeMock = new Mock<IColoredOutputDeviceFacade>();
             //Replace default console facade with mock
@@ -155,11 +155,11 @@ namespace TacitusLogger.IntegrationTests
         }
 
         [Test]
-        public void Logger_WithOneFileDestinationWithCustomLogSerializerForAllLogs_SendsLogToFileFacadeSuccessfully()
+        public void Logger_WithOneFileDestinationWithLogSerializerForAllLogs_SendsLogToFileFacadeSuccessfully()
         {
             //Build log
             var logSerializerMocks = LogSerializerThatReturnsPredefinedString("serialized log");
-            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().File().WithCustomLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
+            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().File().WithLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
             //Create facade mocks 
             var fileSystemFacadeMock = new Mock<IFileSystemFacade>();
             //Replace default file system facade with mock
@@ -288,11 +288,11 @@ namespace TacitusLogger.IntegrationTests
         }
 
         [Test]
-        public void Logger_WithOneDebugDestinationWithCustomLogSerializerForAllLogs_SendsLogToDebugFacadeSuccessfully()
+        public void Logger_WithOneDebugDestinationWithLogSerializerForAllLogs_SendsLogToDebugFacadeSuccessfully()
         {
             //Build log
             var logSerializerMocks = LogSerializerThatReturnsPredefinedString("serialized log");
-            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().Debug().WithCustomLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
+            Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().Debug().WithLogSerializer(logSerializerMocks.Object).Add().BuildLogger();
             //Create facade mocks 
             var debugFacadeMock = new Mock<IOutputDeviceFacade>();
             //Replace default debug facade with mock
@@ -369,7 +369,7 @@ namespace TacitusLogger.IntegrationTests
             var logSerializerMocks = LogSerializerThatReturnsPredefinedString("serialized log");
             Logger logger = (Logger)LoggerBuilder.Logger().ForAllLogs().TextWriter()
                                                                        .WithWriter(textWriterMock.Object)
-                                                                       .WithCustomLogSerializer(logSerializerMocks.Object)
+                                                                       .WithLogSerializer(logSerializerMocks.Object)
                                                                        .Add()
                                                                        .BuildLogger();
             //Call Logger's method to send log
@@ -549,7 +549,7 @@ namespace TacitusLogger.IntegrationTests
         }
          
         [Test]
-        public void Logger_WithTwoLogGroupsEachIncludingOneFileDestinationWithCustomLogSerializerAndFilePathGen_SendsLogToFacadesSuccessfully()
+        public void Logger_WithTwoLogGroupsEachIncludingOneFileDestinationWithLogSerializerAndFilePathGen_SendsLogToFacadesSuccessfully()
         {
             // Arrange
             var logSerializer1 = LogSerializerThatReturnsPredefinedString("resultFromFirstSerializer");
@@ -558,10 +558,10 @@ namespace TacitusLogger.IntegrationTests
             var filePathGenerator2 = LogFilePathGeneratorThatReturnsPredefinedString("resultFromSecondFilePathGenerator");
 
             //Build logger with two log groups
-            Logger logger = (Logger)LoggerBuilder.Logger().NewLogGroup("Group1").ForRule(x => x.Context == "context1").File().WithCustomLogSerializer(logSerializer1.Object)
+            Logger logger = (Logger)LoggerBuilder.Logger().NewLogGroup("Group1").ForRule(x => x.Context == "context1").File().WithLogSerializer(logSerializer1.Object)
                                                                                                                       .WithPath(filePathGenerator1.Object)
                                                                                                                       .Add().BuildLogGroup()
-                                                          .NewLogGroup("Group2").ForRule(x => x.Context == "context2").File().WithCustomLogSerializer(logSerializer2.Object)
+                                                          .NewLogGroup("Group2").ForRule(x => x.Context == "context2").File().WithLogSerializer(logSerializer2.Object)
                                                                                                                       .WithPath(filePathGenerator2.Object)
                                                                                                                       .Add().BuildLogGroup()
                                                           .BuildLogger();
@@ -600,8 +600,8 @@ namespace TacitusLogger.IntegrationTests
 
             Logger logger = (Logger)LoggerBuilder.Logger().NewLogGroup("Group1").ForRule(x => x.LogType == LogType.Info)
                                                                                 .File().WithPath(filePathGeneratorMock.Object)
-                                                                                       .WithCustomLogSerializer(logSerializerMock.Object).Add()
-                                                                                .Console().WithCustomLogSerializer(logSerializerMock.Object).Add()
+                                                                                       .WithLogSerializer(logSerializerMock.Object).Add()
+                                                                                .Console().WithLogSerializer(logSerializerMock.Object).Add()
                                                                                 .BuildLogGroup()
                                                                                 .BuildLogger();
 

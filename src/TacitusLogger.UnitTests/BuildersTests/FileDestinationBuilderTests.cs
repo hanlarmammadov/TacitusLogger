@@ -28,10 +28,10 @@ namespace TacitusLogger.UnitTests.BuildersTests
 
         #endregion
 
-        #region Tests for WithCustomLogSerializer method
+        #region Tests for WithLogSerializer method
 
         [Test]
-        public void WithCustomLogSerializer_WhenCalled_SetsLogSerializer()
+        public void WithLogSerializer_WhenCalled_SetsLogSerializer()
         {
             // Arrange
             var loggerBuilder = LoggerBuilder.Logger();
@@ -40,14 +40,14 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
 
             // Act
-            fileDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            fileDestinationBuilder.WithLogSerializer(logSerializer);
 
             // Assert
             Assert.AreEqual(logSerializer, fileDestinationBuilder.LogSerializer);
         }
 
         [Test]
-        public void WithCustomLogSerializer_WhenCalled_ReturnsFileDestinationBuilder()
+        public void WithLogSerializer_WhenCalled_ReturnsFileDestinationBuilder()
         {
             // Arrange
             var loggerBuilder = LoggerBuilder.Logger();
@@ -56,31 +56,31 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
 
             // Act
-            IFileDestinationBuilder returned = fileDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            IFileDestinationBuilder returned = fileDestinationBuilder.WithLogSerializer(logSerializer);
 
             // Assert
             Assert.AreEqual(fileDestinationBuilder, returned);
         }
 
         [Test]
-        public void WithCustomLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
+        public void WithLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
             FileDestinationBuilder fileDestinationBuilder = new FileDestinationBuilder(logGroupDestinationsBuilder);
             // Set first time.
-            fileDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+            fileDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
 
             // Assert
             Assert.Catch<InvalidOperationException>(() =>
             {
                 // Tried to set second time.
-                fileDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+                fileDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
             });
         }
 
         [Test]
-        public void WithCustomLogSerializer_WhenCalledWithNullLogSerializer_ThrowsArgumentNullException()
+        public void WithLogSerializer_WhenCalledWithNullLogSerializer_ThrowsArgumentNullException()
         {
             // Arrange
             var loggerBuilder = LoggerBuilder.Logger();
@@ -91,7 +91,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.Catch<ArgumentNullException>(() =>
             {
                 // Act
-                fileDestinationBuilder.WithCustomLogSerializer(null);
+                fileDestinationBuilder.WithLogSerializer(null);
             });
         }
 
@@ -206,7 +206,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
             ILogSerializer filePathGenerator = new Mock<ILogSerializer>().Object;
 
-            fileDestinationBuilder.WithCustomLogSerializer(logSerializer)
+            fileDestinationBuilder.WithLogSerializer(logSerializer)
                                   .WithPath(filePathGenerator);
 
             // Act
@@ -239,7 +239,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             var logGroupDestinationsBuilderMock = new Mock<ILogGroupDestinationsBuilder>();
             FileDestinationBuilder fileDestinationBuilder = new FileDestinationBuilder(logGroupDestinationsBuilderMock.Object);
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
-            fileDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            fileDestinationBuilder.WithLogSerializer(logSerializer);
              
             // Act
             fileDestinationBuilder.Add();

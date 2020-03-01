@@ -29,10 +29,10 @@ namespace TacitusLogger.UnitTests.BuildersTests
 
         #endregion
 
-        #region Tests for WithCustomLogSerializer method
+        #region Tests for WithLogSerializer method
          
         [Test]
-        public void WithCustomLogSerializer_WhenCalled_SetsLogSerializer()
+        public void WithLogSerializer_WhenCalled_SetsLogSerializer()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
@@ -40,14 +40,14 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
 
             // Act
-            consoleDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            consoleDestinationBuilder.WithLogSerializer(logSerializer);
              
             // Assert
             Assert.AreEqual(logSerializer, consoleDestinationBuilder.LogSerializer);
         }
 
         [Test]
-        public void WithCustomLogSerializer_WhenCalled_ReturnsConsoleDestinationBuilder()
+        public void WithLogSerializer_WhenCalled_ReturnsConsoleDestinationBuilder()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
@@ -55,31 +55,31 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
 
             // Act
-            IConsoleDestinationBuilder returned = consoleDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            IConsoleDestinationBuilder returned = consoleDestinationBuilder.WithLogSerializer(logSerializer);
 
             // Assert
             Assert.AreEqual(consoleDestinationBuilder, returned);
         }
 
         [Test]
-        public void WithCustomLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
+        public void WithLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
             ConsoleDestinationBuilder consoleDestinationBuilder = new ConsoleDestinationBuilder(logGroupDestinationsBuilder);
             // Set first time.
-            consoleDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+            consoleDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
 
             // Assert
             Assert.Catch<InvalidOperationException>(() =>
             {
                 // Tried to set second time.
-                consoleDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+                consoleDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
             });
         }
 
         [Test]
-        public void WithCustomLogSerializer_WhenCalledWithNullLogSerializer_ThrowsArgumentNullException()
+        public void WithLogSerializer_WhenCalledWithNullLogSerializer_ThrowsArgumentNullException()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
@@ -89,7 +89,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.Catch<ArgumentNullException>(() =>
             { 
                 // Act
-                consoleDestinationBuilder.WithCustomLogSerializer(null);
+                consoleDestinationBuilder.WithLogSerializer(null);
             }); 
         }
 
@@ -203,7 +203,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ConsoleDestinationBuilder consoleDestinationBuilder = new ConsoleDestinationBuilder(logGroupDestinationsBuilder);
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
             Dictionary<LogType, ConsoleColor> colorScheme = new Mock<Dictionary<LogType, ConsoleColor>>().Object;
-            consoleDestinationBuilder.WithCustomLogSerializer(logSerializer)
+            consoleDestinationBuilder.WithLogSerializer(logSerializer)
                                         .WithCustomColors(colorScheme);
 
             // Act
@@ -241,7 +241,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = loggerBuilder.NewLogGroup().ForAllLogs();
             ConsoleDestinationBuilder consoleDestinationBuilder = new ConsoleDestinationBuilder(logGroupDestinationsBuilder);
             ILogSerializer logSerializer = new Mock<ILogSerializer>().Object;
-            consoleDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            consoleDestinationBuilder.WithLogSerializer(logSerializer);
 
 
             // Act

@@ -41,17 +41,17 @@ namespace TacitusLogger.UnitTests.BuildersTests
 
         #endregion
 
-        #region Tests for WithCustomLogSerializer method
+        #region Tests for WithLogSerializer method
 
         [Test]
-        public void WithCustomLogSerializer_When_Called_Sets_LogSerializer_And_Returns_Self()
+        public void WithLogSerializer_When_Called_Sets_LogSerializer_And_Returns_Self()
         {
             // Arrange 
             TextWriterDestinationBuilder textWriterDestinationBuilder = new TextWriterDestinationBuilder(new Mock<ILogGroupDestinationsBuilder>().Object);
             var logSerializer = new Mock<ILogSerializer>().Object;
 
             // Act
-            var returned = textWriterDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            var returned = textWriterDestinationBuilder.WithLogSerializer(logSerializer);
 
             // Assert
             Assert.AreEqual(logSerializer, textWriterDestinationBuilder.LogSerializer);
@@ -59,24 +59,24 @@ namespace TacitusLogger.UnitTests.BuildersTests
         }
 
         [Test]
-        public void WithCustomLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
+        public void WithLogSerializer_When_Called_Given_That_Already_Set_Throws_InvalidOperationException()
         {
             // Arrange
             ILogGroupDestinationsBuilder logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
             TextWriterDestinationBuilder textWriterDestinationBuilder = new TextWriterDestinationBuilder(logGroupDestinationsBuilder);
             // Set first time.
-            textWriterDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+            textWriterDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
 
             // Assert
             Assert.Catch<InvalidOperationException>(() =>
             {
                 // Tried to set second time.
-                textWriterDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+                textWriterDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
             });
         }
 
         [Test]
-        public void WithCustomLogSerializer_When_Called_With_Null_ILogSerializer_Throws_ArgumentNullException()
+        public void WithLogSerializer_When_Called_With_Null_ILogSerializer_Throws_ArgumentNullException()
         {
             // Arrange 
             TextWriterDestinationBuilder textWriterDestinationBuilder = new TextWriterDestinationBuilder(new Mock<ILogGroupDestinationsBuilder>().Object);
@@ -84,7 +84,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             Assert.Catch<ArgumentNullException>(() =>
             {
                 // Act
-                textWriterDestinationBuilder.WithCustomLogSerializer(null as ILogSerializer);
+                textWriterDestinationBuilder.WithLogSerializer(null as ILogSerializer);
             });
         }
 
@@ -148,7 +148,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             TextWriterDestinationBuilder textWriterDestinationBuilder = new TextWriterDestinationBuilder(logGroupDestinationsBuilderMock.Object);
             var logSerializer = new Mock<ILogSerializer>().Object;
             var textWriterProvider = new Mock<ITextWriterProvider>().Object;
-            textWriterDestinationBuilder.WithCustomLogSerializer(logSerializer);
+            textWriterDestinationBuilder.WithLogSerializer(logSerializer);
             textWriterDestinationBuilder.WithWriter(textWriterProvider);
 
             // Act
@@ -164,7 +164,7 @@ namespace TacitusLogger.UnitTests.BuildersTests
             // Arrange
             var logGroupDestinationsBuilder = new Mock<ILogGroupDestinationsBuilder>().Object;
             TextWriterDestinationBuilder textWriterDestinationBuilder = new TextWriterDestinationBuilder(logGroupDestinationsBuilder);
-            textWriterDestinationBuilder.WithCustomLogSerializer(new Mock<ILogSerializer>().Object);
+            textWriterDestinationBuilder.WithLogSerializer(new Mock<ILogSerializer>().Object);
 
             // Assert
             Assert.Catch<InvalidOperationException>(() =>

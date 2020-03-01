@@ -20,7 +20,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithSimpleTemplateLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, string template)
         {
-            return self.WithCustomLogSerializer(new SimpleTemplateLogSerializer(template));
+            return self.WithLogSerializer(new SimpleTemplateLogSerializer(template));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c><TacitusLogger.Serializers.SimpleTemplateLogSerializer</c>
@@ -29,7 +29,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithSimpleTemplateLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self)
         {
-            return self.WithCustomLogSerializer(new SimpleTemplateLogSerializer());
+            return self.WithLogSerializer(new SimpleTemplateLogSerializer());
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.ExtendedTemplateLogSerializer</c>
@@ -40,7 +40,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithExtendedTemplateLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, string template, JsonSerializerSettings jsonSerializerSettings)
         {
-            return self.WithCustomLogSerializer(new ExtendedTemplateLogSerializer(template, jsonSerializerSettings));
+            return self.WithLogSerializer(new ExtendedTemplateLogSerializer(template, jsonSerializerSettings));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.ExtendedTemplateLogSerializer</c>
@@ -50,7 +50,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithExtendedTemplateLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, string template)
         {
-            return self.WithCustomLogSerializer(new ExtendedTemplateLogSerializer(template));
+            return self.WithLogSerializer(new ExtendedTemplateLogSerializer(template));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.ExtendedTemplateLogSerializer</c>
@@ -59,7 +59,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithExtendedTemplateLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self)
         {
-            return self.WithCustomLogSerializer(new ExtendedTemplateLogSerializer());
+            return self.WithLogSerializer(new ExtendedTemplateLogSerializer());
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.GeneratorFunctionLogSerializer</c>
@@ -69,7 +69,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithGeneratorFuncLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, LogModelFunc<string> generatorFunc)
         {
-            return self.WithCustomLogSerializer(new GeneratorFunctionLogSerializer(generatorFunc));
+            return self.WithLogSerializer(new GeneratorFunctionLogSerializer(generatorFunc));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.JsonLogSerializer</c>
@@ -81,7 +81,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithJsonLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, LogModelFunc<Object> customObjectFactoryMethod, JsonSerializerSettings jsonSerializerSettings)
         {
-            return self.WithCustomLogSerializer(new JsonLogSerializer(customObjectFactoryMethod, jsonSerializerSettings));
+            return self.WithLogSerializer(new JsonLogSerializer(customObjectFactoryMethod, jsonSerializerSettings));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.JsonLogSerializer</c>
@@ -92,7 +92,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithJsonLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, LogModelFunc<Object> customObjectFactoryMethod)
         {
-            return self.WithCustomLogSerializer(new JsonLogSerializer(customObjectFactoryMethod));
+            return self.WithLogSerializer(new JsonLogSerializer(customObjectFactoryMethod));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.JsonLogSerializer</c>
@@ -103,7 +103,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithJsonLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self, JsonSerializerSettings jsonSerializerSettings)
         {
-            return self.WithCustomLogSerializer(new JsonLogSerializer(jsonSerializerSettings));
+            return self.WithLogSerializer(new JsonLogSerializer(jsonSerializerSettings));
         }
         /// <summary>
         /// Adds a custom log serializer of type <c>TacitusLogger.Serializers.JsonLogSerializer</c>
@@ -113,7 +113,7 @@ namespace TacitusLogger.Builders
         /// <returns>Self.</returns>
         public static TBuilder WithJsonLogText<TBuilder>(this IBuilderWithLogTextSerialization<TBuilder> self)
         {
-            return self.WithCustomLogSerializer(new JsonLogSerializer());
+            return self.WithLogSerializer(new JsonLogSerializer());
         }
     }
 }

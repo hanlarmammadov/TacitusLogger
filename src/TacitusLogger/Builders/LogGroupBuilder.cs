@@ -10,7 +10,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds a log group for the given logger builder.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class LogGroupBuilder : ILogGroupBuilder
     {

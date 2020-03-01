@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild> 
     <Authors>Khanlar Mammadov</Authors> 
-    <Version>0.3.0</Version>  
+    <Version>0.4.0</Version>  
   </PropertyGroup>
  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -14,13 +14,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>7.2</LangVersion> 
   </PropertyGroup>
-
+ 
   <ItemGroup>
-    <Compile Remove="Destinations\FileLogDestinationOld.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
  
   <ItemGroup>

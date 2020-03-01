@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds a list of log contributors for the given logger builder.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class LogContributorsBuilder : ILogContributorsBuilder
     {

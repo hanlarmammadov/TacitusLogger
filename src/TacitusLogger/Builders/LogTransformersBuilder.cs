@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds a list of log transformers for the given logger builder.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class LogTransformersBuilder : ILogTransformersBuilder
     {

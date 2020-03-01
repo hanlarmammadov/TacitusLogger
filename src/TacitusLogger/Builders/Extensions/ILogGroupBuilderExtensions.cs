@@ -9,7 +9,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Adds extension methods to <c>TacitusLogger.Builders.ILogGroupBuilder</c> interface and its implementations.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ILogGroupBuilderExtensions
     {

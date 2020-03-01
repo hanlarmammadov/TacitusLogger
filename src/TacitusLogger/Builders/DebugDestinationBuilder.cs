@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds the debug log destination and adds it to own log group destination builder.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class DebugDestinationBuilder : LogDestinationBuilderBase, IDebugDestinationBuilder
     {

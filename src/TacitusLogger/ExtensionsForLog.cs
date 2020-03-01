@@ -3,7 +3,6 @@ using System.ComponentModel;
 
 namespace TacitusLogger
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ExtensionsForLog
     {

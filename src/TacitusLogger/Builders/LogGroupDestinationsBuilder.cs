@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Setups the log destinations of the given log group.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class LogGroupDestinationsBuilder: ILogGroupDestinationsBuilder
     {

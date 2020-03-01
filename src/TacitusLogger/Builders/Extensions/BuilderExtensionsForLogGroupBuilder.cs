@@ -4,8 +4,7 @@ namespace TacitusLogger.Builders
 {
     /// <summary>
     /// Adds extension methods to <c>TacitusLogger.Builders.ILogGroupDestinationsBuilder</c> interface and its implementations.
-    /// </summary>
-    [Browsable(false)]
+    /// </summary> 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BuilderExtensionsForLogGroupBuilder
     {

@@ -2,8 +2,7 @@
 using TacitusLogger.Contributors;
 
 namespace TacitusLogger.Builders
-{
-    [Browsable(false)]
+{ 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ILogContributorsBuilderExtensions
     { 

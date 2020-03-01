@@ -3,7 +3,6 @@ using TacitusLogger.Destinations;
 
 namespace TacitusLogger
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ExtensionMethodsForLogger
     {

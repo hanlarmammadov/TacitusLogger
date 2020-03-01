@@ -3,7 +3,6 @@ using TacitusLogger.Transformers;
 
 namespace TacitusLogger.Builders
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface ILogTransformersBuilder
     {

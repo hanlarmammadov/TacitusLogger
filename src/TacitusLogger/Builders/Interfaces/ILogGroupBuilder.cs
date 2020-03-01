@@ -4,7 +4,6 @@ using TacitusLogger.Strategies.DestinationFeeding;
 
 namespace TacitusLogger.Builders
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface ILogGroupBuilder
     {

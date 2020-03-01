@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Adds extension methods to <c>TacitusLogger.Builders.IBuilderWithLogTextSerialization<TBuilder></c> interface and its implementations.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class IBuilderWithLogTextSerializationExtensions
     {

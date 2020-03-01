@@ -6,7 +6,6 @@ using TacitusLogger.Strategies.LogCreation;
 
 namespace TacitusLogger.Builders
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface ILoggerBuilder
     {

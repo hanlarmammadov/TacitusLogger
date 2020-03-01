@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds and adds an instance of <c>TacitusLogger.Destinations.TextWriterDestination</c> class to the <c>TacitusLogger.Builders.ILogGroupDestinationsBuilder</c>
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class TextWriterDestinationBuilder : LogDestinationBuilderBase, ITextWriterDestinationBuilder
     {

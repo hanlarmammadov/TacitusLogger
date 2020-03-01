@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 namespace TacitusLogger
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ExtensionMethodsForILogger
     {

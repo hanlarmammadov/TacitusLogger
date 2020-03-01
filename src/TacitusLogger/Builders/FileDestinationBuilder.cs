@@ -8,7 +8,6 @@ namespace TacitusLogger.Builders
     /// <summary>
     /// Builds the file log destination and adds it to own log group destination builder.
     /// </summary>
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class FileDestinationBuilder : LogDestinationBuilderBase, IFileDestinationBuilder
     {

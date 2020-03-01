@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using TacitusLogger.Components.Time;
 using TacitusLogger.Caching;
 
 namespace TacitusLogger
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class LogGroupExtensions
     {

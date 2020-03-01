@@ -5,7 +5,6 @@ using TacitusLogger.Serializers;
 
 namespace TacitusLogger.Builders
 {
-    [Browsable(false)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class LogDestinationBuilderBase
     { 

@@ -528,7 +528,7 @@ Log serializers are used by destinations that need some textual representation o
 ILogSerializer myCustomLogSerializer = new MyCustomLogSerializer();
 
 ILogger logger = LoggerBuilder.Logger().ForAllLogs()
-                                       .File().WithCustomLogSerializer(myCustomLogSerializer)
+                                       .File().WithLogSerializer(myCustomLogSerializer)
                                               .Add()
                                        .BuildLogger();
 ```

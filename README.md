@@ -8,12 +8,16 @@ Tacitus logger helps to organize your logging process to save vital execution in
 
 ## Installation
 
+
 The NuGet <a href="http://example.com/" target="_blank">package</a>:
 
 ```powershell
 PM> Install-Package TacitusLogger
-```
-
+``` 
+Dependencies:  
+* NET Standard >= 1.3   
+* <a href="https://www.nuget.org/packages/Newtonsoft.Json/" target="_blank">Newtonsoft.Json</a>  >= 9.0.1
+  
 ## Quickstart
 Due to implemented convention over configuration principle, using TacitusLogger could be as simple as:
 ```cs
@@ -71,7 +75,7 @@ TacitusLogger provides an opportunity to:
   - [Logger with constant log level](#Logger-with-constant-log-level)
   - [Logger with mutable log level that can be changed at runtime](#Logger-with-mutable-log-level-that-can-be-changed-at-runtime)
   - [Custom log serializer implementation](#Custom-log-serializer-implementation)
-  - [Guid based log ID](#Guid-based-log-ID)
+  - [GUID based log ID](#GUID-based-log-ID)
   - [Null log ID](#Null-log-ID)
   - [Custom log ID generator implementation](#Custom-log-ID-generator-implementation)
   - [More advanced configuration](#More-advanced-configuration)
@@ -109,10 +113,7 @@ TacitusLogger provides an opportunity to:
   - [Log Transformers](#Log-Transformers)
   - [Logger as a log destination](#Logger-as-a-log-destination)
 - [General log flow of TacitusLogger](#General-log-flow-of-TacitusLogger)
-      - [Synchronous flow.](#Synchronous-flow)
-      - [Asynchronous flow.](#Asynchronous-flow)
-
-
+ 
 # More examples
 
 ## Ways to write logs
@@ -533,7 +534,7 @@ ILogger logger = LoggerBuilder.Logger().ForAllLogs()
                                        .BuildLogger();
 ```
 
-### Guid based log ID
+### GUID based log ID
 
 Log ID generator is used by logger to add `string` log IDs to log models. The default log ID generator for the logger is `TacitusLogger.LogIdGenerators.GuidLogIdGenerator` and it will be added if no log ID generator is specified explicitly. Nevertheless, if you want to add it with some customizations like different GUID format or substring length you may register it explicitly as shown in the following example:
 ```cs

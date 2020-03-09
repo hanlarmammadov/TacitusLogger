@@ -29,7 +29,8 @@ namespace TacitusLogger.UnitTests.DestinationTests
             // Assert  
             Assert.AreEqual(logSerializerMock, fileDestination.LogSerializer);
             Assert.AreEqual(filePathGenerator, fileDestination.LogFilePathGenerator);
-        }
+            Assert.NotNull(fileDestination.FileSystemFacade);
+        } 
         [Test]
         public void Ctor_WithLogStringTemplateAndJsonSerializerSettingsAndLogFilePathGenerator_WhenCalled_SetsTextLogSerializerAndLogFilePathGenerator()
         {

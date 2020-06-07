@@ -9,7 +9,7 @@ Tacitus logger helps to organize your logging process to save vital execution in
 ## Installation
 
 
-The NuGet <a href="http://example.com/" target="_blank">package</a>:
+The NuGet <a href="https://www.nuget.org/packages/TacitusLogger" target="_blank">package</a>:
 
 ```powershell
 PM> Install-Package TacitusLogger

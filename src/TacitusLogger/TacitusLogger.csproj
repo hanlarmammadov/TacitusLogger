@@ -2,9 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild> 
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Khanlar Mammadov</Authors> 
-    <Version>0.4.1</Version>  
+    <Version>0.4.4</Version> 
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl> 
+    <PackageReleaseNotes>Attention: TacitusLogger is currently in Alpha phase. This means you should not use it in any production code.</PackageReleaseNotes> 
+    <Description>A simple yet powerful .NET logging library.
+Tacitus logger helps to organize your logging process to save vital execution information of your application to the variety of logging destinations.
+Attention: TacitusLogger is currently in Alpha phase. This means you should not use it in any production code.</Description> 
+    <PackageProjectUrl>https://github.com/khanlarmammadov/TacitusLogger</PackageProjectUrl> 
+    <RepositoryUrl>https://github.com/khanlarmammadov/TacitusLogger</RepositoryUrl>  
   </PropertyGroup>
  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,7 +20,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.2</LangVersion> 
+    <LangVersion>7.2</LangVersion>
+    <DocumentationFile>bin\Debug\netstandard1.3\TacitusLogger.xml</DocumentationFile> 
   </PropertyGroup>
  
   <ItemGroup>

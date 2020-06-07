@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild> 
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Khanlar Mammadov</Authors> 
-    <Version>0.4.1</Version>  
+    <Version>0.4.3</Version>  
   </PropertyGroup>
  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -12,7 +13,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.2</LangVersion> 
+    <LangVersion>7.2</LangVersion>
+    <DocumentationFile>bin\Debug\netstandard1.3\TacitusLogger.xml</DocumentationFile> 
   </PropertyGroup>
  
   <ItemGroup>

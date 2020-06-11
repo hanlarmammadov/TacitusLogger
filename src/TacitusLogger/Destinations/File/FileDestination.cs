@@ -29,8 +29,9 @@ namespace TacitusLogger.Destinations.File
         /// <param name="filePathGenerator">Log file path generator.</param>
         public FileDestination(ILogSerializer logSerializer, ILogSerializer filePathGenerator)
         {
-            this._logSerializer = logSerializer ?? throw new ArgumentNullException("logSerializer");
-            this._filePathGenerator = filePathGenerator ?? throw new ArgumentNullException("filePathGenerator");
+            _logSerializer = logSerializer ?? throw new ArgumentNullException("logSerializer");
+            _filePathGenerator = filePathGenerator ?? throw new ArgumentNullException("filePathGenerator");
+            _fileSystemFacade = new StandardFileSystemFacade();
         }
         /// <summary>
         /// Initializes a new instance of the TacitusLogger.Destinations.FileDestination class using 

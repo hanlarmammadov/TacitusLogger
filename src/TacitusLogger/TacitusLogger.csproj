@@ -24,6 +24,10 @@ Tacitus logger helps to organize your logging process to save vital execution in
     <LangVersion>7.2</LangVersion>
     <DocumentationFile>bin\Debug\netstandard1.3\TacitusLogger.xml</DocumentationFile> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
  
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />

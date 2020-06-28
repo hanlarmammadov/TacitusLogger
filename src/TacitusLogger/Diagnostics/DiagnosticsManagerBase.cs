@@ -6,8 +6,8 @@ namespace TacitusLogger.Diagnostics
 {
     public abstract class DiagnosticsManagerBase
     {
-        protected string _loggerName;
-        protected ILogDestination _logDestination;
+        private string _loggerName;
+        private ILogDestination _logDestination;
 
         public string LoggerName => _loggerName;
         public ILogDestination LogDestination => _logDestination;

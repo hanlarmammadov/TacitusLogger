@@ -9,7 +9,7 @@ namespace TacitusLogger.Serializers
     /// </summary>
     public abstract class TemplateLogSerializerBase : ILogSerializer
     {
-        protected readonly string _template;
+        private readonly string _template;
 
 
         /// <summary>

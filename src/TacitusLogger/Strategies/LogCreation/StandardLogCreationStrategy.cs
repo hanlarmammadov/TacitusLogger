@@ -7,6 +7,7 @@ using TacitusLogger.Exceptions;
 using TacitusLogger.Contributors;
 using System.Text;
 using TacitusLogger.Components.Strings;
+using System.IO;
 
 namespace TacitusLogger.Strategies.LogCreation
 {
@@ -15,8 +16,8 @@ namespace TacitusLogger.Strategies.LogCreation
     /// </summary>
     public class StandardLogCreationStrategy : LogCreationStrategyBase
     {
-        protected readonly bool _useUtcTime;
-        protected ITimeProvider _timeProvider;
+        private readonly bool _useUtcTime;
+        private ITimeProvider _timeProvider;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.LogCreationStrategies.StandardLogCreationStrategy</c>.
@@ -57,7 +58,7 @@ namespace TacitusLogger.Strategies.LogCreation
                 AddLogItemsToModel(logModel, log.Items);
 
                 // Add log id.
-                logModel.LogId = _logIdGenerator.Generate(logModel);
+                logModel.LogId = LogIdGenerator.Generate(logModel);
 
                 //Return the created log model.
                 return logModel;
@@ -101,7 +102,7 @@ namespace TacitusLogger.Strategies.LogCreation
                 await AddLogItemsToModelAsync(logModel, log.Items);
                  
                 // Add log id.
-                logModel.LogId = await _logIdGenerator.GenerateAsync(logModel).ConfigureAwait(continueOnCapturedContext: false);
+                logModel.LogId = await LogIdGenerator.GenerateAsync(logModel).ConfigureAwait(continueOnCapturedContext: false);
 
                 //Return the created log model.
                 return logModel;
@@ -165,18 +166,18 @@ namespace TacitusLogger.Strategies.LogCreation
                 logItemsList.AddRange(itemsFromLog);
 
             // Add log items from log contributors.
-            for (int i = 0; i < _logContributors.Count; i++)
+            for (int i = 0; i < LogContributors.Count; i++)
             {
-                if (!_logContributors[i].IsActive)
+                if (!LogContributors[i].IsActive)
                     continue;
                 try
                 {
-                    logItemsList.Add(_logContributors[i].ProduceLogItem());
+                    logItemsList.Add(LogContributors[i].ProduceLogItem());
                 }
                 catch (Exception ex)
                 {
-                    _exceptionHandlingStrategy.HandleException(ex, $"Log contributor: {_logContributors[i].Name}");
-                    if (_exceptionHandlingStrategy.ShouldRethrow)
+                    ExceptionHandlingStrategy.HandleException(ex, $"Log contributor: {LogContributors[i].Name}");
+                    if (ExceptionHandlingStrategy.ShouldRethrow)
                         throw;
                 }
             }
@@ -192,18 +193,18 @@ namespace TacitusLogger.Strategies.LogCreation
                 logItemsList.AddRange(itemsFromLog);
 
             // Add log items from log contributors.
-            for (int i = 0; i < _logContributors.Count; i++)
+            for (int i = 0; i < LogContributors.Count; i++)
             {
-                if (!_logContributors[i].IsActive)
+                if (!LogContributors[i].IsActive)
                     continue;
                 try
                 {
-                    logItemsList.Add(await _logContributors[i].ProduceLogItemAsync());
+                    logItemsList.Add(await LogContributors[i].ProduceLogItemAsync());
                 }
                 catch (Exception ex)
                 {
-                    await _exceptionHandlingStrategy.HandleExceptionAsync(ex, $"Log contributor: {_logContributors[i].Name}");
-                    if (_exceptionHandlingStrategy.ShouldRethrow)
+                    await ExceptionHandlingStrategy.HandleExceptionAsync(ex, $"Log contributor: {LogContributors[i].Name}");
+                    if (ExceptionHandlingStrategy.ShouldRethrow)
                         throw;
                 }
             }

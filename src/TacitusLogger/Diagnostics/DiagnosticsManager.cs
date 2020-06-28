@@ -38,7 +38,7 @@ namespace TacitusLogger.Diagnostics
                 LogDate = _useUtcTime ? _timeProvider.GetUtcTime() : _timeProvider.GetLocalTime(),
                 LogItems = log.Items.ToArray(),
                 LogType = log.Type,
-                Source = _loggerName
+                Source = LoggerName
             };
             logModel.LogId = _logIdGenerator.Generate(logModel);
             SendToDestination(logModel);

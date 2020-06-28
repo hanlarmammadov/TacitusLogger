@@ -13,8 +13,8 @@ namespace TacitusLogger.Destinations
     /// </summary>
     public abstract class NetDiagnosticsLogDestinationBase : ILogDestination
     {
-        protected readonly ILogSerializer _logSerializer;
-        protected IOutputDeviceFacade _consoleFacade;
+        private readonly ILogSerializer _logSerializer;
+        private IOutputDeviceFacade _consoleFacade;
 
         /// <summary>
         /// Initialize base class with log serializer and console facade.
@@ -24,8 +24,8 @@ namespace TacitusLogger.Destinations
         /// <param name="consoleFacade">Console facade.</param>
         protected NetDiagnosticsLogDestinationBase(ILogSerializer logSerializer, IOutputDeviceFacade consoleFacade)
         {
-            this._logSerializer = logSerializer ?? throw new ArgumentNullException("logSerializer");
-            this._consoleFacade = consoleFacade ?? throw new ArgumentNullException("consoleFacade");
+            _logSerializer = logSerializer ?? throw new ArgumentNullException("logSerializer");
+            _consoleFacade = consoleFacade ?? throw new ArgumentNullException("consoleFacade");
         }
 
         /// <summary>

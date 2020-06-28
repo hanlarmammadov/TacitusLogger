@@ -13,9 +13,9 @@ namespace TacitusLogger.Strategies.LogCreation
     /// </summary>
     public abstract class LogCreationStrategyBase
     {
-        protected ILogIdGenerator _logIdGenerator;
-        protected IList<LogContributorBase> _logContributors;
-        protected ExceptionHandlingStrategyBase _exceptionHandlingStrategy;
+        private ILogIdGenerator _logIdGenerator;
+        private IList<LogContributorBase> _logContributors;
+        private ExceptionHandlingStrategyBase _exceptionHandlingStrategy;
 
         public LogCreationStrategyBase()
         {
@@ -29,7 +29,7 @@ namespace TacitusLogger.Strategies.LogCreation
         /// <summary>
         /// Gets the collection of all log contributors that was specified during the initialization.
         /// </summary>
-        public IEnumerable<LogContributorBase> LogContributors => _logContributors;
+        public IList<LogContributorBase> LogContributors => _logContributors;
         /// <summary>
         /// Gets the exception handling strategy that was specified during the initialization.
         /// </summary>

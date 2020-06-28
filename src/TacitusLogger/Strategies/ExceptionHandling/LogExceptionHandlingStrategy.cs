@@ -13,7 +13,7 @@ namespace TacitusLogger.Strategies.ExceptionHandling
             try
             {
                 var log = Log.Error("Logger threw an exception. See the log item.").From(context).WithEx(exception);
-                _diagnosticsManager.WriteToDiagnostics(log);
+                DiagnosticsManager.WriteToDiagnostics(log);
             }
             catch
             {
@@ -28,7 +28,7 @@ namespace TacitusLogger.Strategies.ExceptionHandling
                     await Task.FromCanceled(cancellationToken);
 
                 var log = Log.Error("Logger threw an exception. See the log item.").From(context).WithEx(exception);
-                await _diagnosticsManager.WriteToDiagnosticsAsync(log, cancellationToken);
+                await DiagnosticsManager.WriteToDiagnosticsAsync(log, cancellationToken);
             }
             catch (OperationCanceledException)
             {

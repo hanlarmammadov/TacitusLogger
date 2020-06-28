@@ -65,7 +65,7 @@ namespace TacitusLogger.Serializers
         {
             return new StringBuilder()
                .AppendLine(this.GetType().FullName)
-               .AppendLine($"Template: {_template}")
+               .AppendLine($"Template: {Template}")
                .Append($"Default date format: {_defaultDateFormat}")
                .ToString();
         }

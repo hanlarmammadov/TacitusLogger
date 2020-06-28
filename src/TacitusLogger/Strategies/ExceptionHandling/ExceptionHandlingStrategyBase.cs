@@ -7,7 +7,7 @@ namespace TacitusLogger.Strategies.ExceptionHandling
 {
     public abstract class ExceptionHandlingStrategyBase
     {
-        protected DiagnosticsManagerBase _diagnosticsManager;
+        private DiagnosticsManagerBase _diagnosticsManager;
 
         public abstract bool ShouldRethrow { get; }
         public DiagnosticsManagerBase DiagnosticsManager => _diagnosticsManager;

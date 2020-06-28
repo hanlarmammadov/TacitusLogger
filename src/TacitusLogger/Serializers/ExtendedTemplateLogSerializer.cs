@@ -118,7 +118,7 @@ namespace TacitusLogger.Serializers
         {
             return new StringBuilder()
                .AppendLine(this.GetType().FullName)
-               .AppendLine($"Template: {_template}")
+               .AppendLine($"Template: {Template}")
                .AppendLine($"Default date format: {_defaultDateFormat}")
                .Append($"Json serializer settings: {_jsonSerializerSettings.ToString().AddIndentationToLines()}")
                .ToString(); 

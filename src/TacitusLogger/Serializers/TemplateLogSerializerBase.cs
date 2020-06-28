@@ -10,7 +10,7 @@ namespace TacitusLogger.Serializers
     public abstract class TemplateLogSerializerBase : ILogSerializer
     {
         private readonly string _template;
-
+        private bool _isDisposed;
 
         /// <summary>
         /// 
@@ -21,7 +21,7 @@ namespace TacitusLogger.Serializers
             _template = template ?? throw new ArgumentNullException("template");
         }
 
-             
+
         /// <summary>
         /// Gets the template specified during the initialization.
         /// </summary>
@@ -30,7 +30,7 @@ namespace TacitusLogger.Serializers
         /// Gets the log model template resolver that was set during initialization.
         /// </summary>
         public abstract ILogModelTemplateResolver LogModelTemplateResolver { get; }
- 
+
 
         /// <summary>
         /// Serializes provided <paramref name="logModel"/> to string using specified template.
@@ -40,18 +40,21 @@ namespace TacitusLogger.Serializers
         /// <returns>Resulting string.</returns>
         public string Serialize(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             try
             {
                 return LogModelTemplateResolver.Resolve(logModel, _template);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new LogSerializerException("Error when resolving provided log model using specified template. See the inner exception.", ex);
             }
         }
         public virtual void Dispose()
         {
-
+            _isDisposed = true;
         }
     }
 }

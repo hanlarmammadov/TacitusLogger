@@ -1,8 +1,11 @@
-﻿
+﻿using System;
+
 namespace TacitusLogger.Transformers
 { 
     public abstract class StringsTransformerBase : SynchronousTransformerBase
     {
+        private bool _isDisposed;
+
         public StringsTransformerBase(string name)
             : base(name)
         {
@@ -11,6 +14,9 @@ namespace TacitusLogger.Transformers
 
         public override void Transform(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StringsTransformerBase");
+
             if (logModel.LogId != null)
                 TransformString(ref logModel.LogId);
             if (logModel.Context != null)
@@ -30,6 +36,15 @@ namespace TacitusLogger.Transformers
                     TransformString(ref name);
                     logModel.LogItems[i].Name = name;
                 }
+        }
+        public override void Dispose()
+        {
+            if (_isDisposed)
+                return;
+
+            base.Dispose();
+
+            _isDisposed = true;
         }
         protected abstract void TransformString(ref string str);
     }

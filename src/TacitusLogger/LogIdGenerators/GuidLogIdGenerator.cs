@@ -11,6 +11,7 @@ namespace TacitusLogger.LogIdGenerators
     {
         private readonly string _guidFormat;
         private readonly int _substringLength;
+        private bool _isDisposed;
 
         /// <summary>
         /// Initializes a new instance of the <c>TacitusLogger.LogIdGenerators.GuidLogIdGenerator</c> class.
@@ -43,22 +44,28 @@ namespace TacitusLogger.LogIdGenerators
         /// <returns>Log id string.</returns>
         public override string Generate(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("GuidLogIdGenerator");
+
             try
             {
-                var str = Guid.NewGuid().ToString(_guidFormat); ;
+                var str = Guid.NewGuid().ToString(_guidFormat);
                 if (_substringLength == 0)
                     return str;
                 else
                     return str.Substring(0, _substringLength);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new LogIdGeneratorException("Error when generating log id GUID", ex);
             }
         }
         public override void Dispose()
         {
-
+            if (_isDisposed)
+                return;
+            base.Dispose();
+            _isDisposed = true;
         }
         public override string ToString()
         {
@@ -66,7 +73,7 @@ namespace TacitusLogger.LogIdGenerators
                .AppendLine(this.GetType().FullName)
                .AppendLine($"Guid format: {_guidFormat}")
                .Append($"Substring length: {_substringLength}")
-               .ToString(); 
+               .ToString();
         }
     }
 }

@@ -12,11 +12,12 @@ namespace TacitusLogger.Caching
     {
         private readonly int _size;
         private readonly int _cacheTime;
-        private readonly object _currentIndexLocker; 
+        private readonly object _currentIndexLocker;
         private ITimeProvider _timeProvider;
         private Int64 _ticksOfNextDeadline;
         private LogModel[] _logModelCollection;
         private int _currentIndex;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.LogCache</c> using time provider, cache size and optional 
@@ -25,7 +26,7 @@ namespace TacitusLogger.Caching
         /// <param name="size">Max size of caching collection after reaching which the AddToCache method returns the filled collection and creates a new empty one.</param>
         /// <param name="cacheTime">Max time in milliseconds after creating of caching collection after reaching which the AddToCache method returns the filled collection and creates a new empty one irrelevant to its filling.</param>
         public InMemoryLogCache(int size, int cacheTime = -1)
-        { 
+        {
             if (size < 1)
                 throw new ArgumentException("Invalid cache size");
             if ((cacheTime < -1) || (cacheTime == 0))
@@ -67,6 +68,9 @@ namespace TacitusLogger.Caching
         /// <returns></returns>
         public LogModel[] AddToCache(LogModel logModel, bool forceToFlush = false)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("InMemoryLogCache");
+
             try
             {
                 LogModel[] collection;
@@ -97,7 +101,7 @@ namespace TacitusLogger.Caching
         }
         public void Dispose()
         {
-
+            _isDisposed = true;
         }
         public override string ToString()
         {
@@ -107,7 +111,7 @@ namespace TacitusLogger.Caching
                    .Append($"Cache time (in milliseconds): {_cacheTime.ToString()}")
                    .Append($"Time provider: {_timeProvider.ToString()}")
                    .ToString();
-        } 
+        }
         /// <summary>
         /// Creates a new collection and resets the current index and deadline ticks.
         /// </summary>

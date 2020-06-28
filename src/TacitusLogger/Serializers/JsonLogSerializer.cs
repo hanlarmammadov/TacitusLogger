@@ -17,6 +17,7 @@ namespace TacitusLogger.Serializers
         private readonly LogModelFunc<Object> _converter;
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private IJsonSerializerFacade _jsonSerializerFacade;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.Serializers.JsonLogSerializer</c> using log model to custom type converter 
@@ -87,6 +88,9 @@ namespace TacitusLogger.Serializers
         /// <returns></returns>
         public string Serialize(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             try
             {
                 return _jsonSerializerFacade.Serialize(_converter(logModel), _jsonSerializerSettings);
@@ -98,7 +102,7 @@ namespace TacitusLogger.Serializers
         }
         public void Dispose()
         {
-
+            _isDisposed = true;
         }
         /// <summary>
         /// Replaces the default json serializer facade with the provided one.
@@ -106,6 +110,9 @@ namespace TacitusLogger.Serializers
         /// <param name="jsonSerializerFacade">New json serializer facade.</param>
         public void ResetJsonSerializerFacade(IJsonSerializerFacade jsonSerializerFacade)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             _jsonSerializerFacade = jsonSerializerFacade ?? throw new ArgumentNullException("jsonSerializerFacade");
         }
         public override string ToString()

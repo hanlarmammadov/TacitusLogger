@@ -25,6 +25,7 @@ namespace TacitusLogger
         private ILogCache _logCache;
         private DestinationFeedingStrategyBase _destinationFeedingStrategy;
         private LogGroupSettings _logGroupSettings;
+        private bool _isDisposed;
 
         public LogGroup(string name, LogModelFunc<bool> rule, IEnumerable<ILogDestination> logDestinations, LogGroupSettings logGroupSettings)
         {
@@ -114,6 +115,9 @@ namespace TacitusLogger
         /// <returns>The LogGroup itself</returns>
         public LogGroup AddDestinations(params ILogDestination[] logDestinations)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             if ((logDestinations == null) || (logDestinations.Length == 0))
                 throw new ArgumentNullException("logDestinations", "Log destinations list should not be empty");
 
@@ -139,6 +143,9 @@ namespace TacitusLogger
         /// <param name="log">Log model of type log group.</param>
         public override void Send(LogModel log)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             try
             {
                 if (log == null)
@@ -185,6 +192,9 @@ namespace TacitusLogger
         /// <returns>A task that represents the asynchronous operation.</returns>
         public override async Task SendAsync(LogModel log, CancellationToken cancellationToken = default)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             try
             {
                 // Check if the log is null. After this, no checks of this type will be performed for the log.
@@ -234,21 +244,32 @@ namespace TacitusLogger
         }
         public LogGroup SetLogCache(ILogCache logCache, bool isActive = true)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             _cachingIsActive = isActive;
             _logCache = logCache ?? throw new ArgumentNullException("logCache");
             return this;
         }
         public LogGroup SetStatus(Setting<LogGroupStatus> status)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             _status = status ?? throw new ArgumentNullException("status");
             return this;
         }
         public void ResetDestinationFeedingStrategy(DestinationFeedingStrategyBase destinationFeedingStrategy)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogGroup");
+
             _destinationFeedingStrategy = destinationFeedingStrategy ?? throw new ArgumentNullException("destinationFeedingStrategy");
         }
         public override void Dispose()
         {
+            if (_isDisposed)
+                return;
             try
             {
                 if (_cachingIsActive)
@@ -284,6 +305,8 @@ namespace TacitusLogger
                     _logDestinations[i].Dispose();
                 }
                 catch { }
+
+            _isDisposed = true;
         }
         public override string ToString()
         {
@@ -299,7 +322,7 @@ namespace TacitusLogger
                 sb.Append(_logCache.ToString()?.AddIndentationToLines());
             else
                 sb.Append("[No cache]");
-             
+
             sb.AppendLine().Append("Log destinations: ");
             if (_logDestinations.Count != 0)
                 for (int i = 0; i < _logDestinations.Count; i++)
@@ -315,7 +338,7 @@ namespace TacitusLogger
         /// <returns>Random group name.</returns>
         internal static string GenerateGroupName()
         {
-            return "Group_" + Guid.NewGuid().ToString("N").Substring(0, 8); 
+            return "Group_" + Guid.NewGuid().ToString("N").Substring(0, 8);
         }
 
     }

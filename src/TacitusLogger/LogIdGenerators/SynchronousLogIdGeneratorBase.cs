@@ -11,6 +11,8 @@ namespace TacitusLogger.LogIdGenerators
     /// </summary>
     public abstract class SynchronousLogIdGeneratorBase : ILogIdGenerator
     {
+        private bool _isDisposed;
+
         public abstract string Generate(LogModel logModel);
         /// <summary>
         /// Asynchronous counterpart of Generate method.
@@ -19,6 +21,9 @@ namespace TacitusLogger.LogIdGenerators
         /// <returns>A task that represents completed asynchronous operation. The value of the TResult represents the resulting log id string.</returns>
         public Task<string> GenerateAsync(LogModel logModel, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("SynchronousLogIdGeneratorBase");
+
             // Check if operation has been canceled.
             if (cancellationToken.IsCancellationRequested)
                 return Task<string>.FromCanceled<string>(cancellationToken);
@@ -26,7 +31,7 @@ namespace TacitusLogger.LogIdGenerators
         }
         public virtual void Dispose()
         {
-
+            _isDisposed = true;
         }
     }
 }

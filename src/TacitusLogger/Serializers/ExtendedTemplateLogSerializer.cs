@@ -20,7 +20,7 @@ namespace TacitusLogger.Serializers
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private ILogModelTemplateResolver _logModelTemplateResolver;
         private IJsonSerializerFacade _jsonSerializerFacade;
-
+        private bool _isDisposed;
 
         /// <summary>
         /// Initializes a new instance of the <c>TacitusLogger.Serializers.ExtendedTemplateLogSerializer</c> with the specified template and
@@ -112,6 +112,9 @@ namespace TacitusLogger.Serializers
         /// <param name="jsonSerializerFacade">New json serializer facade.</param>
         public void ResetJsonSerializerFacade(IJsonSerializerFacade jsonSerializerFacade)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("ExtendedTemplateLogSerializer");
+
             _jsonSerializerFacade = jsonSerializerFacade ?? throw new ArgumentNullException("jsonSerializerFacade");
         }
         public override string ToString()
@@ -122,6 +125,15 @@ namespace TacitusLogger.Serializers
                .AppendLine($"Default date format: {_defaultDateFormat}")
                .Append($"Json serializer settings: {_jsonSerializerSettings.ToString().AddIndentationToLines()}")
                .ToString(); 
+        }
+        public override void Dispose()
+        {
+            if (_isDisposed)
+                return;
+
+            base.Dispose();
+
+            _isDisposed = true;
         }
         /// <summary>
         /// Resets the log model template resolver that was set during initialization. For testing purposes.

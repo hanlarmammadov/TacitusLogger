@@ -21,6 +21,5 @@ namespace TacitusLogger.Transformers
         {
             _transformerDelegate(ref str);
         }
-
     }
 }

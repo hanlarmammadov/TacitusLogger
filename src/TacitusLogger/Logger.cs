@@ -32,6 +32,7 @@ namespace TacitusLogger
         private Setting<LogLevel> _logLevel;
         private IList<LogTransformerBase> _logTransformers;
         private DiagnosticsManagerBase _diagnosticsManager;
+        private bool _isDisposed;
 
         /// <summary>
         /// 
@@ -141,6 +142,9 @@ namespace TacitusLogger
         /// <param name="logGroup">log group implementing <c>TacitusLogger.ILogGroup</c> interface</param>
         public void AddLogGroup(LogGroupBase logGroup)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             if (logGroup == null)
                 throw new ArgumentNullException("logGroup");
 
@@ -158,6 +162,9 @@ namespace TacitusLogger
         /// <returns>Created and added LogGroup instance.</returns>
         public LogGroup NewLogGroup(LogModelFunc<bool> rule)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             if (rule == null)
                 throw new ArgumentNullException("rule");
             var logGroup = new LogGroup(rule);
@@ -179,6 +186,9 @@ namespace TacitusLogger
         /// <param name="logCreationStrategy">New log creation strategy.</param>
         public void ResetLogCreationStrategy(LogCreationStrategyBase logCreationStrategy)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             if (logCreationStrategy == null)
                 throw new ArgumentNullException("logCreationStrategy");
             logCreationStrategy.InitStrategy(_logIdGenerator, _logContributors, _exceptionHandlingStrategy);
@@ -190,6 +200,9 @@ namespace TacitusLogger
         /// <param name="exceptionHandlingStrategy"></param>
         public void ResetExceptionHandlingStrategy(ExceptionHandlingStrategyBase exceptionHandlingStrategy)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             _exceptionHandlingStrategy = exceptionHandlingStrategy ?? throw new ArgumentNullException("exceptionHandlingStrategy");
             _exceptionHandlingStrategy.SetDiagnosticsManager(_diagnosticsManager);
             // Reset log creation strategy as well.
@@ -201,6 +214,9 @@ namespace TacitusLogger
         /// <param name="logContributor">Log contributor.</param>
         public void AddLogContributor(LogContributorBase logContributor)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             if (logContributor == null)
                 throw new ArgumentNullException("logContributor");
             _logContributors.Add(logContributor);
@@ -211,6 +227,9 @@ namespace TacitusLogger
         /// <param name="logContributor">Log transformer.</param>
         public void AddLogTransformer(LogTransformerBase logTransformer)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             if (logTransformer == null)
                 throw new ArgumentNullException("logTransformer");
             _logTransformers.Add(logTransformer);
@@ -221,6 +240,9 @@ namespace TacitusLogger
         /// <param name="logDestination"></param>
         public void SetDiagnosticsDestination(ILogDestination diagnosticsDestination)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             _diagnosticsDestination = diagnosticsDestination ?? throw new ArgumentNullException("diagnosticsDestination");
             _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);
         }
@@ -234,6 +256,9 @@ namespace TacitusLogger
         /// <returns>Generated log id</returns>
         public virtual string Log(Log log)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             try
             {
                 // Check log level
@@ -276,6 +301,9 @@ namespace TacitusLogger
         /// <returns>A task that represents the asynchronous read operation. The value of the TResult represents generated log id.</returns>
         public virtual async Task<string> LogAsync(Log log, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             try
             {
                 // Check if operation has been canceled.
@@ -318,6 +346,9 @@ namespace TacitusLogger
         }
         public void Send(LogModel[] logs)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             try
             {
                 // Send to log groups.
@@ -331,6 +362,9 @@ namespace TacitusLogger
         }
         public Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             try
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -351,13 +385,16 @@ namespace TacitusLogger
             }
         }
         public void WriteLoggerConfigurationToDiagnostics()
-        { 
+        {
             var config = this.ToString();
             var log = TacitusLogger.Log.Info("Logger has been configured. See the log item.").With("Configuration", config);
             _diagnosticsManager.WriteToDiagnostics(log);
         }
         public void ResetDiagnosticsManager(DiagnosticsManagerBase diagnosticsManager)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TacitusLogger");
+
             _diagnosticsManager = diagnosticsManager ?? throw new ArgumentNullException("diagnosticsManager");
             _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);
 
@@ -366,6 +403,9 @@ namespace TacitusLogger
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             try
             {
                 _logIdGenerator.Dispose();
@@ -405,6 +445,8 @@ namespace TacitusLogger
                     _logGroups[i].Dispose();
                 }
                 catch { }
+
+            _isDisposed = true;
         }
         public override string ToString()
         {

@@ -9,6 +9,7 @@ namespace TacitusLogger.Transformers
     {
         private readonly string _name;
         private Setting<bool> _isActive;
+        private bool _isDisposed;
 
         protected LogTransformerBase(string name)
         {
@@ -23,16 +24,24 @@ namespace TacitusLogger.Transformers
         public abstract Task TransformAsync(LogModel logModel, CancellationToken cancellationToken = default(CancellationToken));
         public void SetActive(Setting<bool> isActive)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("LogTransformerBase");
+
             _isActive = isActive ?? throw new ArgumentNullException("isActive");
         }
         public virtual void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             try
             {
                 if (_isActive != null)
                     _isActive.Dispose();
             }
             catch { }
+
+            _isDisposed = true;
         } 
         public override string ToString()
         {

@@ -10,7 +10,7 @@ namespace TacitusLogger.Serializers
     public class GeneratorFunctionLogSerializer : ILogSerializer
     {
         private readonly LogModelFunc<string> _generatorFunction;
-
+        private bool _isDisposed;
 
         /// <summary>
         /// Initializes a new instance of the TacitusLogger.Serializers.GeneratorFunctionLogSerializer
@@ -20,7 +20,7 @@ namespace TacitusLogger.Serializers
         /// <param name="generatorFunction">Delegate of type <c>LogModelFunc<string></c></param>
         public GeneratorFunctionLogSerializer(LogModelFunc<string> generatorFunction)
         {
-            this._generatorFunction = generatorFunction ?? throw new ArgumentNullException("generatorFunction");
+            _generatorFunction = generatorFunction ?? throw new ArgumentNullException("generatorFunction");
         }
 
 
@@ -37,6 +37,9 @@ namespace TacitusLogger.Serializers
         /// <returns>Resulting string.</returns>
         public string Serialize(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             try
             {
                 return _generatorFunction(logModel);
@@ -48,7 +51,7 @@ namespace TacitusLogger.Serializers
         }
         public void Dispose()
         {
-
+            _isDisposed = true;
         }
     }
 }

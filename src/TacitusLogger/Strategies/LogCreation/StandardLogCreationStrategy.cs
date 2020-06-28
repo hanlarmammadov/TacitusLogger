@@ -18,6 +18,7 @@ namespace TacitusLogger.Strategies.LogCreation
     {
         private readonly bool _useUtcTime;
         private ITimeProvider _timeProvider;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.LogCreationStrategies.StandardLogCreationStrategy</c>.
@@ -46,6 +47,9 @@ namespace TacitusLogger.Strategies.LogCreation
         /// <returns>Created log model.</returns>
         public override LogModel CreateLogModel(Log log, string source)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             try
             {
                 if (log == null)
@@ -85,6 +89,9 @@ namespace TacitusLogger.Strategies.LogCreation
         /// <returns>Created log model.</returns>
         public override async Task<LogModel> CreateLogModelAsync(Log log, string source, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             try
             {
                 // Check if operation has been canceled.
@@ -126,6 +133,9 @@ namespace TacitusLogger.Strategies.LogCreation
         /// <param name="timeProvider"></param>
         public void ResetTimeProvider(ITimeProvider timeProvider)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("StandardLogCreationStrategy");
+
             _timeProvider = timeProvider ?? throw new ArgumentNullException("timeProvider");
         }
         public override string ToString()

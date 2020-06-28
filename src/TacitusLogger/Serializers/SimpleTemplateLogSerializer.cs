@@ -14,7 +14,6 @@ namespace TacitusLogger.Serializers
         private static readonly string _defaultDateFormat = Templates.DateFormats.Default;
         private ILogModelTemplateResolver _logModelTemplateResolver;
 
-
         /// <summary>
         /// Initializes a new instance of the <c>TacitusLogger.Serializers.SimpleTemplateLogSerializer</c> with the specified template.
         /// </summary>

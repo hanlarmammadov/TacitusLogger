@@ -17,7 +17,7 @@ namespace TacitusLogger.Transformers
         public override Task TransformAsync(LogModel logModel, CancellationToken cancellationToken = default)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("SynchronousTransformerBase");
+                return Task.FromException(new ObjectDisposedException("SynchronousTransformerBase")); 
 
             if (cancellationToken.IsCancellationRequested)
                 return Task.FromCanceled(cancellationToken);

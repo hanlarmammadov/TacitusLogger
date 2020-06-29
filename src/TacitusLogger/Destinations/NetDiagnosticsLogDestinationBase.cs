@@ -1,5 +1,5 @@
 ﻿using System;
-using TacitusLogger.Serializers; 
+using TacitusLogger.Serializers;
 using System.Threading.Tasks;
 using System.Threading;
 using TacitusLogger.Exceptions;
@@ -15,6 +15,7 @@ namespace TacitusLogger.Destinations
     {
         private readonly ILogSerializer _logSerializer;
         private IOutputDeviceFacade _consoleFacade;
+        private bool _isDisposed;
 
         /// <summary>
         /// Initialize base class with log serializer and console facade.
@@ -43,6 +44,9 @@ namespace TacitusLogger.Destinations
         /// <param name="logs">Log models collection.</param>
         public void Send(LogModel[] logs)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("NetDiagnosticsLogDestinationBase");
+
             try
             {
                 for (int i = 0; i < logs.Length; i++)
@@ -69,6 +73,9 @@ namespace TacitusLogger.Destinations
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("NetDiagnosticsLogDestinationBase");
+
             try
             {
                 for (int i = 0; i < logs.Length; i++)
@@ -101,7 +108,12 @@ namespace TacitusLogger.Destinations
         }
         public virtual void Dispose()
         {
-            _logSerializer.Dispose(); 
+            if (_isDisposed)
+                return;
+
+            _logSerializer.Dispose();
+
+            _isDisposed = true;
         }
         public override string ToString()
         {
@@ -117,6 +129,9 @@ namespace TacitusLogger.Destinations
         /// <param name="consoleFacade">New console facade</param>
         public void ResetConsoleFacade(IOutputDeviceFacade consoleFacade)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("NetDiagnosticsLogDestinationBase");
+
             _consoleFacade = consoleFacade;
         }
     }

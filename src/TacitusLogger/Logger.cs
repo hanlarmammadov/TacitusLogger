@@ -143,7 +143,7 @@ namespace TacitusLogger
         public void AddLogGroup(LogGroupBase logGroup)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             if (logGroup == null)
                 throw new ArgumentNullException("logGroup");
@@ -163,7 +163,7 @@ namespace TacitusLogger
         public LogGroup NewLogGroup(LogModelFunc<bool> rule)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             if (rule == null)
                 throw new ArgumentNullException("rule");
@@ -187,7 +187,7 @@ namespace TacitusLogger
         public void ResetLogCreationStrategy(LogCreationStrategyBase logCreationStrategy)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             if (logCreationStrategy == null)
                 throw new ArgumentNullException("logCreationStrategy");
@@ -201,7 +201,7 @@ namespace TacitusLogger
         public void ResetExceptionHandlingStrategy(ExceptionHandlingStrategyBase exceptionHandlingStrategy)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             _exceptionHandlingStrategy = exceptionHandlingStrategy ?? throw new ArgumentNullException("exceptionHandlingStrategy");
             _exceptionHandlingStrategy.SetDiagnosticsManager(_diagnosticsManager);
@@ -215,7 +215,7 @@ namespace TacitusLogger
         public void AddLogContributor(LogContributorBase logContributor)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             if (logContributor == null)
                 throw new ArgumentNullException("logContributor");
@@ -228,7 +228,7 @@ namespace TacitusLogger
         public void AddLogTransformer(LogTransformerBase logTransformer)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             if (logTransformer == null)
                 throw new ArgumentNullException("logTransformer");
@@ -241,7 +241,7 @@ namespace TacitusLogger
         public void SetDiagnosticsDestination(ILogDestination diagnosticsDestination)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             _diagnosticsDestination = diagnosticsDestination ?? throw new ArgumentNullException("diagnosticsDestination");
             _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);
@@ -257,7 +257,7 @@ namespace TacitusLogger
         public virtual string Log(Log log)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             try
             {
@@ -302,7 +302,7 @@ namespace TacitusLogger
         public virtual async Task<string> LogAsync(Log log, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             try
             {
@@ -347,7 +347,7 @@ namespace TacitusLogger
         public void Send(LogModel[] logs)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             try
             {
@@ -363,7 +363,7 @@ namespace TacitusLogger
         public Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                return Task.FromException(new ObjectDisposedException("Logger"));
 
             try
             {
@@ -393,7 +393,7 @@ namespace TacitusLogger
         public void ResetDiagnosticsManager(DiagnosticsManagerBase diagnosticsManager)
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("TacitusLogger");
+                throw new ObjectDisposedException("Logger");
 
             _diagnosticsManager = diagnosticsManager ?? throw new ArgumentNullException("diagnosticsManager");
             _diagnosticsManager.SetDependencies(_diagnosticsDestination, _loggerName);

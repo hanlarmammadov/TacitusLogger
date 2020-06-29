@@ -11,6 +11,7 @@ namespace TacitusLogger.Destinations.TextWriter
     public class FactoryMethodTextWriterProvider : ITextWriterProvider
     {
         private readonly LogModelFunc<System.IO.TextWriter> _factoryMethod;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.Providers.FactoryMethodTextWriterProvider</c> using a factory method of 
@@ -34,11 +35,14 @@ namespace TacitusLogger.Destinations.TextWriter
         /// <returns>An instance of <c>System.IO.TextWriter</c> class.</returns>
         public System.IO.TextWriter GetTextWriter(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("FactoryMethodTextWriterProvider");
+
             return _factoryMethod(logModel);
         }
         public void Dispose()
         {
-
+            _isDisposed = true;
         } 
     }
 }

@@ -17,6 +17,7 @@ namespace TacitusLogger.Destinations.TextWriter
     {
         private readonly ILogSerializer _logSerializer;
         private readonly ITextWriterProvider _textWriterProvider;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.Destinations.TextWriterDestination</c> using specified log serializer and 
@@ -57,6 +58,9 @@ namespace TacitusLogger.Destinations.TextWriter
         /// <param name="logs">Log models collection.</param> 
         public void Send(LogModel[] logs)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TextWriterDestination");
+
             try
             {
                 if (logs.Length == 1)
@@ -110,6 +114,9 @@ namespace TacitusLogger.Destinations.TextWriter
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TextWriterDestination");
+
             try
             {
                 // Check if operation has been canceled.
@@ -170,6 +177,9 @@ namespace TacitusLogger.Destinations.TextWriter
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             try
             {
                 _logSerializer.Dispose();
@@ -181,12 +191,14 @@ namespace TacitusLogger.Destinations.TextWriter
                 _textWriterProvider.Dispose();
             }
             catch { }
+
+            _isDisposed = true;
         }
         public override string ToString()
         {
             return new StringBuilder()
-                        .AppendLine(this.GetType().FullName) 
-                        .AppendLine($"Text writer provider: {_textWriterProvider.ToString().AddIndentationToLines()}")  
+                        .AppendLine(this.GetType().FullName)
+                        .AppendLine($"Text writer provider: {_textWriterProvider.ToString().AddIndentationToLines()}")
                         .Append($"Log serializer: {_logSerializer.ToString().AddIndentationToLines()}")
                         .ToString();
         }

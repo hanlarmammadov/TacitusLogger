@@ -19,6 +19,7 @@ namespace TacitusLogger.Destinations.File
         private readonly ILogSerializer _logSerializer;
         private readonly ILogSerializer _filePathGenerator;
         private IFileSystemFacade _fileSystemFacade;
+        private bool _isDisposed;
 
         /// <summary>
         /// Initializes a new instance of the TacitusLogger.Destinations.FileDestination class using 
@@ -194,6 +195,9 @@ namespace TacitusLogger.Destinations.File
         /// <param name="logs">Log model collection.</param> 
         public void Send(LogModel[] logs)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("FileDestination");
+
             try
             {
                 if (logs.Length == 1)
@@ -236,6 +240,9 @@ namespace TacitusLogger.Destinations.File
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("FileDestination");
+
             try
             {
                 // Check if operation has been canceled.
@@ -286,6 +293,9 @@ namespace TacitusLogger.Destinations.File
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             try
             {
                 _logSerializer.Dispose();
@@ -297,12 +307,14 @@ namespace TacitusLogger.Destinations.File
                 _filePathGenerator.Dispose();
             }
             catch { }
+
+            _isDisposed = true;
         }
         public override string ToString()
         {
             return new StringBuilder()
-                        .AppendLine(this.GetType().FullName) 
-                        .AppendLine($"Path generator: {_filePathGenerator.ToString().AddIndentationToLines()}") 
+                        .AppendLine(this.GetType().FullName)
+                        .AppendLine($"Path generator: {_filePathGenerator.ToString().AddIndentationToLines()}")
                         .Append($"Log serializer: {_logSerializer.ToString().AddIndentationToLines()}")
                         .ToString();
         }

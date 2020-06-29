@@ -22,7 +22,7 @@ namespace TacitusLogger.LogIdGenerators
         public Task<string> GenerateAsync(LogModel logModel, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (_isDisposed)
-                throw new ObjectDisposedException("SynchronousLogIdGeneratorBase");
+                return Task.FromException<string>(new ObjectDisposedException("SynchronousLogIdGeneratorBase"));
 
             // Check if operation has been canceled.
             if (cancellationToken.IsCancellationRequested)

@@ -17,6 +17,7 @@ namespace TacitusLogger.Destinations.Console
         private readonly ILogSerializer _logSerializer;
         private readonly IDictionary<LogType, ConsoleColor> _colorScheme;
         private IColoredOutputDeviceFacade _consoleFacade;
+        private bool _isDisposed;
 
         /// <summary>     
         /// Initializes a new instance of the TacitusLogger.Destinations.ConsoleDestination class using 
@@ -115,7 +116,7 @@ namespace TacitusLogger.Destinations.Console
         /// </summary>
         /// <returns></returns>
         public static Dictionary<LogType, ConsoleColor> GetDefaultColorScheme()
-        {
+        { 
             Dictionary<LogType, ConsoleColor> colorScheme = new Dictionary<LogType, ConsoleColor>()
             {
                 { LogType.Success, ConsoleColor.DarkGreen },
@@ -134,6 +135,9 @@ namespace TacitusLogger.Destinations.Console
         /// <param name="logs">Log models collection.</param>
         public void Send(LogModel[] logs)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("ConsoleDestination");
+
             try
             {
                 for (int i = 0; i < logs.Length; i++)
@@ -165,6 +169,9 @@ namespace TacitusLogger.Destinations.Console
         /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task SendAsync(LogModel[] logs, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("ConsoleDestination");
+
             try
             {
                 for (int i = 0; i < logs.Length; i++)
@@ -199,7 +206,12 @@ namespace TacitusLogger.Destinations.Console
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             _logSerializer.Dispose();
+
+            _isDisposed = true;
         }
         public override string ToString()
         { 

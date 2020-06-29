@@ -9,6 +9,7 @@ namespace TacitusLogger.Destinations.TextWriter
     public class TextWriterProvider : ITextWriterProvider
     {
         private readonly System.IO.TextWriter _textWriter;
+        private bool _isDisposed;
 
         /// <summary>
         /// Creates an instance of <c>TacitusLogger.Providers.TextWriterProvider</c> using 
@@ -32,11 +33,19 @@ namespace TacitusLogger.Destinations.TextWriter
         /// <returns>An instance of <c>System.IO.TextWriter</c> class.</returns>
         public System.IO.TextWriter GetTextWriter(LogModel logModel)
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException("TextWriterProvider");
+
             return _textWriter;
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
             _textWriter.Dispose();
+
+            _isDisposed = true;
         }
     }
 }
